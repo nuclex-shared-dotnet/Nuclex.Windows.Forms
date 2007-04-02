@@ -31,12 +31,16 @@ namespace Nuclex.Windows.Forms {
     #endregion // class ListViewEmbeddedControlEventArgs
 
     /// <summary>Raised when a control has been added to the collection</summary>
-    public event EventHandler<ListViewEmbeddedControlEventArgs> EmbeddedControlAdded;
+    public event EventHandler<ListViewEmbeddedControlEventArgs> Added;
     /// <summary>Raised when a control is removed from the collection</summary>
-    public event EventHandler<ListViewEmbeddedControlEventArgs> EmbeddedControlRemoved;
+    public event EventHandler<ListViewEmbeddedControlEventArgs> Removed;
+    /// <summary>Raised the collection is about to be cleared</summary>
+    public event EventHandler Clearing;
 
     /// <summary>Removes all elements from the ListViewEmbeddedControlCollection</summary>
     protected override void ClearItems() {
+      OnClearing();
+
       base.ClearItems();
     }
 
@@ -49,6 +53,8 @@ namespace Nuclex.Windows.Forms {
     /// <param name="item">The zero-based index at which item should be inserted</param>
     protected override void InsertItem(int index, ListViewEmbeddedControl item) {
       base.InsertItem(index, item);
+
+      OnAdded(item);
     }
 
     /// <summary>
@@ -56,7 +62,11 @@ namespace Nuclex.Windows.Forms {
     /// </summary>
     /// <param name="index">The zero-based index of the element to remove</param>
     protected override void RemoveItem(int index) {
+      ListViewEmbeddedControl control = base[index];
+
       base.RemoveItem(index);
+
+      OnRemoved(control);
     }
 
     /// <summary>Replaces the element at the specified index</summary>
@@ -66,25 +76,36 @@ namespace Nuclex.Windows.Forms {
     /// </param>
     /// <param name="item">The zero-based index of the element to replace</param>
     protected override void SetItem(int index, ListViewEmbeddedControl item) {
+      ListViewEmbeddedControl control = base[index];
+
       base.SetItem(index, item);
+
+      OnRemoved(control);
+      OnAdded(item);
     }
 
-    /// <summary>Fires the EmbeddedControlAdded event</summary>
+    /// <summary>Fires the Added event</summary>
     /// <param name="embeddedControl">
     ///   Embedded control that has been added to the collection
     /// </param>
-    protected virtual void OnEmbeddedControlAdded(ListViewEmbeddedControl embeddedControl) {
-      if(EmbeddedControlAdded != null)
-        EmbeddedControlAdded(this, new ListViewEmbeddedControlEventArgs(embeddedControl));
+    protected virtual void OnAdded(ListViewEmbeddedControl embeddedControl) {
+      if(Added != null)
+        Added(this, new ListViewEmbeddedControlEventArgs(embeddedControl));
     }
 
-    /// <summary>Fires the EmbeddedControlRemoved event</summary>
+    /// <summary>Fires the Removed event</summary>
     /// <param name="embeddedControl">
     ///   Embedded control that has been removed from the collection
     /// </param>
-    protected virtual void OnEmbeddedControlRemoved(ListViewEmbeddedControl embeddedControl) {
-      if(EmbeddedControlRemoved != null)
-        EmbeddedControlRemoved(this, new ListViewEmbeddedControlEventArgs(embeddedControl));
+    protected virtual void OnRemoved(ListViewEmbeddedControl embeddedControl) {
+      if(Removed != null)
+        Removed(this, new ListViewEmbeddedControlEventArgs(embeddedControl));
+    }
+
+    /// <summary>Fires the Clearing event</summary>
+    protected virtual void OnClearing() {
+      if(Clearing != null)
+        Clearing(this, EventArgs.Empty);
     }
 
   }

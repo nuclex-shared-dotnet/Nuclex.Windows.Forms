@@ -17,17 +17,17 @@ namespace Nuclex.Windows.Forms {
       this.column = column;
     }
 
-    /// <summary>Control that has been embedded in a ListView</summary>
+    /// <summary>Control that is being embedded in the ListView</summary>
     public Control Control {
       get { return this.control; }
     }
 
-    /// <summary>Row in the ListView the control has been embedded in</summary>
+    /// <summary>Row the control has been embedded in</summary>
     public int Row {
       get { return this.row; }
     }
 
-    /// <summary>Column in the ListView the control has been embedded in</summary>
+    /// <summary>Column the control has been embedded in</summary>
     public int Column {
       get { return this.column; }
     }
@@ -38,6 +38,7 @@ namespace Nuclex.Windows.Forms {
     private int row;
     /// <summary>Column where the control is embedded</summary>
     private int column;
+
   }
 
 } // namespace Nuclex.Windows.Forms

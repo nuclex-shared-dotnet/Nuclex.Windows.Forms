@@ -20,42 +20,42 @@ namespace Nuclex.Windows.Forms {
   /// </remarks>
   public partial class ContainerListView : System.Windows.Forms.ListView {
 
-    #region struct EmbeddedControl
-
-    /// <summary>Informationen über ein ins ListView eingebettetes Steuerelement</summary>
-    private struct EmbeddedControl {
-      /// <summary>Steuerelement das im ListView eingebetttr ist</summary>
-      public Control Control;
-      /// <summary>Spalte in der das Control eingebettet ist</summary>
-      public int Column;
-      /// <summary>Zeile in der das Control eingebettet ist</summary>
-      public int Row;
-      /// <summary>Wie das Control in der ListView-Zelle angedockt ist</summary>
-      public DockStyle Dock;
-      /// <summary>Das ListView-Element in dem sich das Control befindet</summary>
-      public ListViewItem Item;
-    }
-
-    #endregion // struct EmbeddedControl
-
     /// <summary>Initialisiert ein neues ListView-Steuerelement</summary>
     public ContainerListView() {
       this.embeddedControlClickedHandler = new EventHandler(embeddedControlClicked);
 
       this.embeddedControls = new ListViewEmbeddedControlCollection();
-      this.embeddedControls.EmbeddedControlAdded +=
+      this.embeddedControls.Added +=
         new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
           embeddedControlAdded
         );
-      this.embeddedControls.EmbeddedControlRemoved +=
+      this.embeddedControls.Removed +=
         new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
           embeddedControlRemoved
         );
+      this.embeddedControls.Clearing +=
+        new EventHandler(embeddedControlsClearing);
 
       InitializeComponent();
 
       base.View = View.Details;
       base.AllowColumnReorder = false;
+    }
+
+    /// <summary>Called when the list of embedded controls has been cleared</summary>
+    /// <param name="sender">Collection that has been cleared of its controls</param>
+    /// <param name="e">Not used</param>
+    private void embeddedControlsClearing(object sender, EventArgs e) {
+      this.BeginUpdate();
+      try {
+        foreach(ListViewEmbeddedControl embeddedControl in this.embeddedControls) {
+          embeddedControl.Control.Click -= this.embeddedControlClickedHandler;
+          this.Controls.Remove(embeddedControl.Control);
+        }
+      }
+      finally {
+        this.EndUpdate();
+      }
     }
 
     /// <summary>Called when a control gets removed from  the embedded controls list</summary>
@@ -92,7 +92,7 @@ namespace Nuclex.Windows.Forms {
         foreach(ListViewEmbeddedControl embeddedControl in this.embeddedControls) {
           if(ReferenceEquals(embeddedControl.Control, sender)) {
             if((embeddedControl.Row > 0) && (embeddedControl.Row < Items.Count))
-            Items[embeddedControl.Row].Selected = true;
+              Items[embeddedControl.Row].Selected = true;
           }
         }
       }
@@ -100,7 +100,48 @@ namespace Nuclex.Windows.Forms {
         this.EndUpdate();
       }
     }
-    
+
+    /// <summary>Calculates the boundaries of a cell in the list view</summary>
+    /// <param name="item">Item in the list view from which to calculate the cell</param>
+    /// <param name="subItem">Index der cell whose boundaries to calculate</param>
+    /// <returns>The boundaries of the specified list view cell</returns>
+    /// <exception cref="IndexOutOfRangeException">
+    ///   When the specified sub item index is not in the range of valid sub items
+    /// </exception>
+    protected Rectangle GetSubItemBounds(ListViewItem item, int subItem) {
+
+      int[] order = GetColumnOrder();
+      if(order == null) // No Columns
+        return Rectangle.Empty;
+
+      if(subItem >= order.Length)
+        throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
+
+      // Rahmen des gesamten ListViewItems ermitteln, inklusive aller SubItems
+      Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
+      int subItemX = itemBounds.Left;
+
+      // Horizontale Position des SubItems berechnen
+      // Da die Spaltenreihenfolge geändert werden kann müssen wir
+      // Columns[order[i]] statt Columns[i] verwenden!
+      ColumnHeader columnHeader;
+      int i;
+      for(i = 0; i < order.Length; ++i) {
+        columnHeader = this.Columns[order[i]];
+        if(columnHeader.Index == subItem)
+          break;
+
+        subItemX += columnHeader.Width;
+      }
+
+      return new Rectangle(
+        subItemX, itemBounds.Top, this.Columns[order[i]].Width, itemBounds.Height
+      );
+
+    }
+
+    /// <summary>Obtains the current column order of the list</summary>
+    /// <returns>An array indicating the order of the list's columns</returns>
     private int[] GetColumnOrder() {
       int[] order = new int[this.Columns.Count];
 
@@ -109,42 +150,6 @@ namespace Nuclex.Windows.Forms {
 
       return order;
     }
-
-		/// <summary>Calculates the boundaries of a cell in the list view</summary>
-		/// <param name="item">Item in the list view from which to calculate the cell</param>
-		/// <param name="subItem">Index der cell whose boundaries to calculate</param>
-		/// <returns>The boundaries of the specified list view cell</returns>
-		protected Rectangle GetSubItemBounds(ListViewItem item, int subItem) {
-
-			int[] order = GetColumnOrder();
-			if (order == null) // No Columns
-				return Rectangle.Empty;
-
-			if (subItem >= order.Length)
-				throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
-
-			// Rahmen des gesamten ListViewItems ermitteln, inklusive aller SubItems
-			Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
-			int subItemX = itemBounds.Left;
-
-			// Horizontale Position des SubItems berechnen
-			// Da die Spaltenreihenfolge geändert werden kann müssen wir
-			// Columns[order[i]] statt Columns[i] verwenden!
-			ColumnHeader columnHeader;
-			int i;
-			for (i = 0; i < order.Length; ++i) {
-				columnHeader = this.Columns[order[i]];
-				if (columnHeader.Index == subItem)
-					break;
-
-				subItemX += columnHeader.Width;
-			}
-
-			return new Rectangle(
-				subItemX, itemBounds.Top, this.Columns[order[i]].Width, itemBounds.Height
-			);
-
-		}
 
     /// <summary>Event handler for when embedded controls are clicked on</summary>
     private EventHandler embeddedControlClickedHandler;
