@@ -20,7 +20,7 @@ namespace Nuclex.Windows.Forms {
   /// </remarks>
   public partial class ContainerListView : System.Windows.Forms.ListView {
 
-    /// <summary>Initialisiert ein neues ListView-Steuerelement</summary>
+    /// <summary>Initializes a new ContainerListView</summary>
     public ContainerListView() {
       this.embeddedControlClickedHandler = new EventHandler(embeddedControlClicked);
 
@@ -117,13 +117,12 @@ namespace Nuclex.Windows.Forms {
       if(subItem >= order.Length)
         throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
 
-      // Rahmen des gesamten ListViewItems ermitteln, inklusive aller SubItems
+      // Determine the border of the entire ListViewItem, including all sub items
       Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
       int subItemX = itemBounds.Left;
 
-      // Horizontale Position des SubItems berechnen
-      // Da die Spaltenreihenfolge geändert werden kann müssen wir
-      // Columns[order[i]] statt Columns[i] verwenden!
+      // Find the horizontal position of the sub item. Because the column order can vary,
+      // we need to use Columns[order[i]] instead of simply doing Columns[i] here!
       ColumnHeader columnHeader;
       int i;
       for(i = 0; i < order.Length; ++i) {

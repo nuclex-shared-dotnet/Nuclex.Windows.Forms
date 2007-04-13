@@ -81,6 +81,22 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>EmbeddedControlCollection</Name>
     </Compile>
+    <Compile Include="Source\TrackingBar\TrackingBar.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>TrackingBar</Name>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Source\TrackingBar\TrackingBar.Designer.cs">
+      <DependentUpon>TrackingBar.cs</DependentUpon>
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>TrackingBar.Designer</Name>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nuclex.Support\Nuclex.Support %28PC%29.csproj">
+      <Project>{A696702E-AFAD-45E7-88FA-1E2520E5E746}</Project>
+      <Name>Nuclex.Support %28PC%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA\Game Studio Express\v1.0\Microsoft.Xna.ContentPipeline.targets" />
