@@ -53,7 +53,7 @@ namespace Nuclex.Windows.Forms {
     public event EventHandler<ListViewEmbeddedControlEventArgs> Added;
     /// <summary>Raised when a control is removed from the collection</summary>
     public event EventHandler<ListViewEmbeddedControlEventArgs> Removed;
-    /// <summary>Raised the collection is about to be cleared</summary>
+    /// <summary>Raised when the collection is about to be cleared</summary>
     public event EventHandler Clearing;
 
     /// <summary>Removes all elements from the ListViewEmbeddedControlCollection</summary>
