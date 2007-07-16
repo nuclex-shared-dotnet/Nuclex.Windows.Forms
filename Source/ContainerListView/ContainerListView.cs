@@ -17,6 +17,7 @@ You should have received a copy of the IBM Common Public
 License along with this library
 */
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +33,7 @@ namespace Nuclex.Windows.Forms {
   /// <remarks>
   ///   There basically were two possible design choices: Provide a specialized
   ///   ListViewSubItem that carries a Control instead of a string or manage the
-  ///   embedded controls in seperation of the ListView's items. The first option
+  ///   embedded controls seperate of the ListView's items. The first option
   ///   would require a complete rewrite of the ListViewItem class and its related
   ///   support classes, all of which are surprisingly large and complex. Thus,
   ///   the less clean but more doable latter option has been chosen.

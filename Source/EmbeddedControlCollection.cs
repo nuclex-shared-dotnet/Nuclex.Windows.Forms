@@ -17,6 +17,7 @@ You should have received a copy of the IBM Common Public
 License along with this library
 */
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -79,6 +80,12 @@ namespace Nuclex.Windows.Forms {
       OnControlRemoved(value);
     }
 
+    // These three methods don't need to be override since their current implementations
+    // in the .NET Framework 2.0 all call the Remove() method on each individual control.
+    // The ControlAdded/ControlRemoved events weren't in the original class and there
+    // are other designs you could use to guarantee that removed controls get disposed
+    // properly, so this should be rechecked when the code is compiled on another
+    // version of the .NET framework
     /*
     /// <summary>Adds an array of control objects to the collection</summary>
     /// <param name="controls">
