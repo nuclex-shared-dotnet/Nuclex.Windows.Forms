@@ -84,6 +84,14 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>EmbeddedControlCollection</Name>
     </Compile>
+    <Compile Include="Source\ProgressReporter\ProgressReporterForm.cs">
+      <SubType>Form</SubType>
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ProgressReporterForm</Name>
+    </Compile>
+    <Compile Include="Source\ProgressReporter\ProgressReporterForm.Designer.cs">
+      <DependentUpon>ProgressReporterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Source\TrackingBar\TrackingBar.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>TrackingBar</Name>
@@ -100,6 +108,14 @@
       <Project>{A696702E-AFAD-45E7-88FA-1E2520E5E746}</Project>
       <Name>Nuclex.Support %28PC%29</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Source\ProgressReporter\ProgressReporterForm.resx">
+      <SubType>Designer</SubType>
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ProgressReporterForm</Name>
+      <DependentUpon>ProgressReporterForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA\Game Studio Express\v1.0\Microsoft.Xna.ContentPipeline.targets" />
