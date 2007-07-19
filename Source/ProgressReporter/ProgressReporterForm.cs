@@ -69,7 +69,7 @@ namespace Nuclex.Windows.Forms {
 
       // Only allow the form to close when the form is ready to close and the
       // progression being tracked has also finished.
-      e.Cancel = (this.state < 2);
+      e.Cancel = (Thread.VolatileRead(ref this.state) < 2);
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ namespace Nuclex.Windows.Forms {
       if(!progression.Ended)
         ShowDialog();
 
-      // We're done, unsubscribe from the progression's events
+      // We're done, unsubscribe from the progression's events again
       progression.AsyncProgressUpdated -= this.asyncProgressUpdatedDelegate;
       progression.AsyncEnded -= this.asyncEndedDelegate;
 
@@ -172,7 +172,7 @@ namespace Nuclex.Windows.Forms {
         int progress = (int)(this.currentProgress * (max - min)) + min;
 
         // Update the control
-        this.progressBar.Value = Math.Min(Math.Max(progress, min), max);;
+        this.progressBar.Value = Math.Min(Math.Max(progress, min), max);
 
         // Assigning the value sends PBM_SETPOS to the control which,
         // according to MSDN, already causes a redraw!
@@ -224,19 +224,18 @@ namespace Nuclex.Windows.Forms {
 
     }
 
-    /// <summary>Whether an update of the control state is pending</summary>
-    private volatile bool progressUpdatePending;
-    /// <summary>Async result for the invoked control state update method</summary>
-    private volatile IAsyncResult progressUpdateAsyncResult;
-    /// <summary>Most recently reported progress of the tracker</summary>
-    private volatile float currentProgress;
-
     /// <summary>Delegate for the asyncEnded() method</summary>
     private EventHandler asyncEndedDelegate;
     /// <summary>Delegate for the asyncProgressUpdated() method</summary>
     private EventHandler<ProgressUpdateEventArgs> asyncProgressUpdatedDelegate;
     /// <summary>Delegate for the progress update method</summary>
     private MethodInvoker updateProgressDelegate;
+    /// <summary>Whether an update of the control state is pending</summary>
+    private volatile bool progressUpdatePending;
+    /// <summary>Async result for the invoked control state update method</summary>
+    private volatile IAsyncResult progressUpdateAsyncResult;
+    /// <summary>Most recently reported progress of the tracker</summary>
+    private volatile float currentProgress;
     /// <summary>Whether the form can be closed and should be closed</summary>
     /// <remarks>
     ///   0: Nothing happened yet
