@@ -101,6 +101,8 @@
     </Compile>
     <Compile Include="Source\ProgressReporter\ProgressReporterForm.Designer.cs">
       <DependentUpon>ProgressReporterForm.cs</DependentUpon>
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ProgressReporterForm.Designer</Name>
     </Compile>
     <Compile Include="Source\TrackingBar\TrackingBar.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>

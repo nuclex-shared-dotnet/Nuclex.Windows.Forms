@@ -22,7 +22,6 @@ namespace Nuclex.Windows.Forms {
     internal ProgressReporterForm() {
       InitializeComponent();
 
-      this.updateProgressDelegate = new MethodInvoker(updateProgress);
       this.asyncEndedDelegate = new EventHandler(asyncEnded);
       this.asyncProgressUpdatedDelegate = new EventHandler<ProgressUpdateEventArgs>(
         asyncProgressUpdated
@@ -112,8 +111,7 @@ namespace Nuclex.Windows.Forms {
 
       // If the new state is 2, the form was ready to close (since the state
       // is incremented once when the form becomes ready to be closed)
-      int newState = Interlocked.Increment(ref this.state);
-      if(newState == 2) {
+      if(Interlocked.Increment(ref this.state) == 2) {
 
         // Close the dialog. Ensure the Close() method is invoked from the
         // same thread the dialog was created in.
@@ -132,53 +130,7 @@ namespace Nuclex.Windows.Forms {
     ///   Contains the new progress achieved by the progression
     /// </param>
     private void asyncProgressUpdated(object sender, ProgressUpdateEventArgs arguments) {
-
-      // Set the new progress without any synchronization
-      this.currentProgress = arguments.Progress;
-
-      // Another use of the double-checked locking idiom, here we're trying to optimize
-      // away the lock in case some "trigger-happy" progressions send way more
-      // progress updates than the poor control can process :)
-      if(!this.progressUpdatePending) {
-        lock(this) {
-          if(!this.progressUpdatePending) {
-            this.progressUpdatePending = true;
-            this.progressUpdateAsyncResult = BeginInvoke(this.updateProgressDelegate);
-          }
-        } // lock
-      }
-
-    }
-
-    /// <summary>Synchronously updates the value visualized in the progress bar</summary>
-    private void updateProgress() {
-      lock(this) {
-
-        // Reset the update flag so incoming updates will cause the control to
-        // update itself another time.
-        this.progressUpdatePending = false;
-        EndInvoke(this.progressUpdateAsyncResult);
-
-        // Until the first progress event is received, the progress reporter shows
-        // a marquee bar to entertain the user even when no progress reports are
-        // being made at all.
-        if(this.progressBar.Style == ProgressBarStyle.Marquee)
-          this.progressBar.Style = ProgressBarStyle.Blocks;
-
-        // Transform the progress into an integer in the range of the progress bar's
-        // min and max values (these should normally be set to 0 and 100).
-        int min = this.progressBar.Minimum;
-        int max = this.progressBar.Maximum;
-        int progress = (int)(this.currentProgress * (max - min)) + min;
-
-        // Update the control
-        this.progressBar.Value = Math.Min(Math.Max(progress, min), max);
-
-        // Assigning the value sends PBM_SETPOS to the control which,
-        // according to MSDN, already causes a redraw!
-        //base.Invalidate();
-
-      } // lock
+      this.progressBar.AsyncSetValue(arguments.Progress);
     }
 
     /// <summary>
@@ -196,8 +148,7 @@ namespace Nuclex.Windows.Forms {
 
       // If the new state is 2, then the form was requested to close before it had
       // been fully constructed, so we should close it now!
-      int newState = System.Threading.Interlocked.Increment(ref this.state);
-      if(newState == 2)
+      if(Interlocked.Increment(ref this.state) == 2)
         Close();
 
     }
@@ -228,14 +179,6 @@ namespace Nuclex.Windows.Forms {
     private EventHandler asyncEndedDelegate;
     /// <summary>Delegate for the asyncProgressUpdated() method</summary>
     private EventHandler<ProgressUpdateEventArgs> asyncProgressUpdatedDelegate;
-    /// <summary>Delegate for the progress update method</summary>
-    private MethodInvoker updateProgressDelegate;
-    /// <summary>Whether an update of the control state is pending</summary>
-    private volatile bool progressUpdatePending;
-    /// <summary>Async result for the invoked control state update method</summary>
-    private volatile IAsyncResult progressUpdateAsyncResult;
-    /// <summary>Most recently reported progress of the tracker</summary>
-    private volatile float currentProgress;
     /// <summary>Whether the form can be closed and should be closed</summary>
     /// <remarks>
     ///   0: Nothing happened yet

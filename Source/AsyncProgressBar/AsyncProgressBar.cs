@@ -73,6 +73,7 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Synchronously updates the value visualized in the progress bar</summary>
     private void updateProgress() {
 
+      // Cache these to shorten the code that follows :)
       int minimum = base.Minimum;
       int maximum = base.Maximum;
 

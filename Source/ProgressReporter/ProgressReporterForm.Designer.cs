@@ -25,7 +25,7 @@ namespace Nuclex.Windows.Forms {
     private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
       this.cancelButton = new System.Windows.Forms.Button();
-      this.progressBar = new System.Windows.Forms.ProgressBar();
+      this.progressBar = new Nuclex.Windows.Forms.AsyncProgressBar();
       this.statusLabel = new System.Windows.Forms.Label();
       this.controlCreationTimer = new System.Windows.Forms.Timer(this.components);
       this.SuspendLayout();
@@ -92,7 +92,7 @@ namespace Nuclex.Windows.Forms {
     #endregion
 
     private System.Windows.Forms.Button cancelButton;
-    private System.Windows.Forms.ProgressBar progressBar;
+    private Nuclex.Windows.Forms.AsyncProgressBar progressBar;
     private System.Windows.Forms.Label statusLabel;
     private System.Windows.Forms.Timer controlCreationTimer;
   }
