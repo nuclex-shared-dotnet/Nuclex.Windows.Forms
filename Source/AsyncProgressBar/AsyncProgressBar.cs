@@ -25,6 +25,10 @@ namespace Nuclex.Windows.Forms {
       this.updateProgressDelegate = new MethodInvoker(updateProgress);
       this.Disposed += new EventHandler(progressBarDisposed);
 
+      // Could probably use VolatileWrite() as well, but for consistency reasons
+      // this is an Interlocked call, too. Mixing different synchronization measures
+      // for a variable causes trouble so often that this raises a red flag
+      // whenever I see it :)
       Interlocked.Exchange(ref this.newProgress, -1.0f);
     }
 
@@ -37,8 +41,10 @@ namespace Nuclex.Windows.Forms {
       // could be executing just now. But the final call to updateProgress() will not
       // have EndInvoke() called on it yet, so we do this here before the control
       // is finally disposed.
-      if(this.progressUpdateAsyncResult != null)
+      if(this.progressUpdateAsyncResult != null) {
         EndInvoke(this.progressUpdateAsyncResult);
+        this.progressUpdateAsyncResult = null;
+      }
 
       // CHECK: This method is only called on an explicit Dispose() of the control.
       //        Microsoft officially states that it's allowed to call Control.BeginInvoke()
@@ -72,6 +78,10 @@ namespace Nuclex.Windows.Forms {
 
     /// <summary>Synchronously updates the value visualized in the progress bar</summary>
     private void updateProgress() {
+
+      // Switch the style if the progress bar is still set to marquee mode
+      if(Style == ProgressBarStyle.Marquee)
+        Style = ProgressBarStyle.Blocks;
 
       // Cache these to shorten the code that follows :)
       int minimum = base.Minimum;

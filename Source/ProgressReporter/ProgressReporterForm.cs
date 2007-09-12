@@ -16,6 +16,20 @@ namespace Nuclex.Windows.Forms {
   ///   Blocking progress dialog that prevents the user from accessing the application
   ///   window during all-blocking background processes.
   /// </summary>
+  /// <example>
+  ///   class Test : Nuclex.Support.Scheduling.ThreadOperation {
+  ///     static void Main() {
+  ///       Test myTest = new Test();
+  ///       myTest.Begin();
+  ///       Nuclex.Windows.Forms.ProgressReporterForm.Track(myTest);
+  ///       myTest.End();
+  ///     }
+  ///     protected override void Execute() {
+  ///       for(int i = 0; i &lt; 10000000; ++i)
+  ///         OnAsyncProgressUpdated((float)i / 10000000.0f);
+  ///     }
+  ///   }
+  /// </example>
   public partial class ProgressReporterForm : Form {
 
     /// <summary>Initializes a new progress reporter</summary>

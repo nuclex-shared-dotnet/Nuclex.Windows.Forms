@@ -95,9 +95,9 @@
       <Name>EmbeddedControlCollection</Name>
     </Compile>
     <Compile Include="Source\ProgressReporter\ProgressReporterForm.cs">
-      <SubType>Form</SubType>
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>ProgressReporterForm</Name>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Source\ProgressReporter\ProgressReporterForm.Designer.cs">
       <DependentUpon>ProgressReporterForm.cs</DependentUpon>
