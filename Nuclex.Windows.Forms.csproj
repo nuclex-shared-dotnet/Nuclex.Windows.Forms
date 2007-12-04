@@ -104,6 +104,11 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>ProgressReporterForm.Designer</Name>
     </Compile>
+    <Compile Include="Source\TrackingBar\ToolStripTrackingBar.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ToolStripTrackingBar</Name>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Source\TrackingBar\TrackingBar.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>TrackingBar</Name>

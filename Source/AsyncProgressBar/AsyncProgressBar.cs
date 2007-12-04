@@ -11,10 +11,17 @@ namespace Nuclex.Windows.Forms {
 
   /// <summary>Progress bar with optimized multi-threading behavior</summary>
   /// <remarks>
-  ///   If a background thread is generating lots of progress updates, using synchronized
-  ///   calls can drastically reduce performance. This progress bar optimizes this case
-  ///   by performing the update asynchronously and keeping only the most recent update
-  ///   when multiple updates arrive while the asynchronous update call is still running.
+  ///   <para>
+  ///     If a background thread is generating lots of progress updates, using synchronized
+  ///     calls can drastically reduce performance. This progress bar optimizes that case
+  ///     by performing the update asynchronously and keeping only the most recent update
+  ///     when multiple updates arrive while the asynchronous update call is still running.
+  ///   </para>
+  ///   <para>
+  ///     This design eliminates useless queueing of progress updates, thereby reducing
+  ///     CPU load occuring in the UI thread and at the same time avoids blocking the
+  ///     worker thread, increasing its performance.
+  ///   </para>
   /// </remarks>
   public partial class AsyncProgressBar : ProgressBar {
 
@@ -22,8 +29,8 @@ namespace Nuclex.Windows.Forms {
     public AsyncProgressBar() {
       InitializeComponent();
 
-      this.updateProgressDelegate = new MethodInvoker(updateProgress);
       this.Disposed += new EventHandler(progressBarDisposed);
+      this.updateProgressDelegate = new MethodInvoker(updateProgress);
 
       // Could probably use VolatileWrite() as well, but for consistency reasons
       // this is an Interlocked call, too. Mixing different synchronization measures
@@ -37,6 +44,11 @@ namespace Nuclex.Windows.Forms {
     /// <param name="arguments">Not used</param>
     private void progressBarDisposed(object sender, EventArgs arguments) {
 
+      // CHECK: This method is only called on an explicit Dispose() of the control.
+      //        Microsoft officially states that it's allowed to call Control.BeginInvoke()
+      //        without calling Control.EndInvoke(), so this code is quite correct,
+      //        but is it also clean? :>
+
       // Since this has to occur in the UI thread, there's no way that updateProgress()
       // could be executing just now. But the final call to updateProgress() will not
       // have EndInvoke() called on it yet, so we do this here before the control
@@ -46,15 +58,18 @@ namespace Nuclex.Windows.Forms {
         this.progressUpdateAsyncResult = null;
       }
 
-      // CHECK: This method is only called on an explicit Dispose() of the control.
-      //        Microsoft officially states that it's allowed to call Control.BeginInvoke()
-      //        without calling Control.EndInvoke(), so this code is quite correct,
-      //        but is it also clean? :>
-
     }
 
     /// <summary>Asynchronously updates the value to be shown in the progress bar</summary>
     /// <param name="value">New value to set the progress bar to</param>
+    /// <remarks>
+    ///   This will schedule an asynchronous update of the progress bar in the UI thread.
+    ///   If you change the progress value again before the progress bar has completed its
+    ///   update cycle, the original progress value will be skipped and the progress bar
+    ///   jumps directly to the latest progress value. Updates are not queued, there is
+    ///   at most one update waiting on the UI thread. It is also strictly guaranteed that
+    ///   the last most progress value set will be shown and never skipped.
+    /// </remarks>
     public void AsyncSetValue(float value) {
 
       // Update the value to be shown on the progress bar. If this happens multiple
@@ -79,10 +94,6 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Synchronously updates the value visualized in the progress bar</summary>
     private void updateProgress() {
 
-      // Switch the style if the progress bar is still set to marquee mode
-      if(Style == ProgressBarStyle.Marquee)
-        Style = ProgressBarStyle.Blocks;
-
       // Cache these to shorten the code that follows :)
       int minimum = base.Minimum;
       int maximum = base.Maximum;
@@ -93,8 +104,10 @@ namespace Nuclex.Windows.Forms {
       // invocation to ensure the most recent value will remain at the end.
       float progress = Interlocked.Exchange(ref this.newProgress, -1.0f);
 
-      // Convert the value to the progress bar's configured range and assign it
-      // to the progress bar
+      // Restrain the value to the progress bar's configured range and assign it.
+      // This is done to prevent exceptions in the UI thread (theoretically the user
+      // could change the progress bar's min and max just before the UI thread executes
+      // this method, so we cannot validate the value in AsyncSetValue())
       int value = (int)(progress * (maximum - minimum)) + minimum;
       base.Value = Math.Min(Math.Max(value, minimum), maximum);
 

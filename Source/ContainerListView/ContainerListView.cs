@@ -36,7 +36,7 @@ namespace Nuclex.Windows.Forms {
   ///   embedded controls seperate of the ListView's items. The first option
   ///   would require a complete rewrite of the ListViewItem class and its related
   ///   support classes, all of which are surprisingly large and complex. Thus,
-  ///   the less clean but more doable latter option has been chosen.
+  ///   I chose the less clean but more doable latter option.
   /// </remarks>
   public partial class ContainerListView : System.Windows.Forms.ListView {
 
@@ -45,14 +45,17 @@ namespace Nuclex.Windows.Forms {
       this.embeddedControlClickedHandler = new EventHandler(embeddedControlClicked);
 
       this.embeddedControls = new ListViewEmbeddedControlCollection();
+
       this.embeddedControls.Added +=
         new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
           embeddedControlAdded
         );
+
       this.embeddedControls.Removed +=
         new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
           embeddedControlRemoved
         );
+
       this.embeddedControls.Clearing +=
         new EventHandler(embeddedControlsClearing);
 

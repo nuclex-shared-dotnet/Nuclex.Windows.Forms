@@ -101,7 +101,8 @@ namespace Nuclex.Windows.Forms {
         Text = windowTitle;
 
       // Only enable the cancel button if the progression can be aborted
-      this.cancelButton.Enabled = (progression is IAbortable);
+      this.abortReceiver = (progression as IAbortable);
+      this.cancelButton.Enabled = (this.abortReceiver != null);
 
       // Subscribe the form to the progression it is supposed to monitor
       progression.AsyncEnded += this.asyncEndedDelegate;
@@ -144,7 +145,19 @@ namespace Nuclex.Windows.Forms {
     ///   Contains the new progress achieved by the progression
     /// </param>
     private void asyncProgressUpdated(object sender, ProgressUpdateEventArgs arguments) {
+
+      // See if this is the first progress update we're receiving. If yes, we need to
+      // switch the progress bar from marquee into its normal mode!
+      int haveProgress = Interlocked.Exchange(ref this.areProgressUpdatesIncoming, 1);
+      if(haveProgress == 0) {
+        this.progressBar.BeginInvoke(
+          (MethodInvoker)delegate() { this.progressBar.Style = ProgressBarStyle.Blocks; }
+        );
+      }
+
+      // Send the new progress to the progress bar
       this.progressBar.AsyncSetValue(arguments.Progress);
+
     }
 
     /// <summary>
@@ -176,8 +189,8 @@ namespace Nuclex.Windows.Forms {
 
       if(this.abortReceiver != null) {
 
-        // Do this first because the abort receiver might trigger the AsyncEnded
-        // event in the calling thread and thus destroy our window even in
+        // Do this first because the abort receiver might trigger the AsyncEnded()
+        // event in the calling thread (us!) and thus destroy our window even in
         // the safe and synchronous UI thread :)
         this.cancelButton.Enabled = false;
 
@@ -200,6 +213,12 @@ namespace Nuclex.Windows.Forms {
     ///   2: Ready to close and close requested, triggers close
     /// </remarks>
     private int state;
+    /// <summary>Whether we're receiving progress updates from the progression</summary>
+    /// <remarks>
+    ///   0: No progress updates have arrived so far
+    ///   1: We have received at least one progress update from the progression
+    /// </remarks>
+    private int areProgressUpdatesIncoming;
     /// <summary>
     ///   If set, reference to an object implementing IAbortable by which the
     ///   ongoing background process can be aborted.

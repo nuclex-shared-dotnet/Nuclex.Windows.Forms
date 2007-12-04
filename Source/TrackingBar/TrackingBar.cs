@@ -40,12 +40,7 @@ namespace Nuclex.Windows.Forms {
 
       // We start off being in the idle state (and thus, being invisible)
       this.isIdle = true;
-      base.Visible = false;
-
-      // Create the tracker and attach ourselfes to its events
-      this.tracker = new ProgressionTracker();
-      this.tracker.AsyncIdleStateChanged += this.asyncIdleStateChangedDelegate;
-      this.tracker.AsyncProgressUpdated += this.asyncProgressUpdateDelegate;
+      this.Visible = false;
 
       // Initialize the delegates we use to update the control's state and those
       // we use to register ourselfes to the tracker's events
@@ -56,6 +51,11 @@ namespace Nuclex.Windows.Forms {
       this.asyncProgressUpdateDelegate = new EventHandler<ProgressUpdateEventArgs>(
         asyncProgressUpdated
       );
+
+      // Create the tracker and attach ourselfes to its events
+      this.tracker = new ProgressionTracker();
+      this.tracker.AsyncIdleStateChanged += this.asyncIdleStateChangedDelegate;
+      this.tracker.AsyncProgressUpdated += this.asyncProgressUpdateDelegate;
     }
 
     /// <summary>Tracks the specified progression in the tracking bar</summary>
