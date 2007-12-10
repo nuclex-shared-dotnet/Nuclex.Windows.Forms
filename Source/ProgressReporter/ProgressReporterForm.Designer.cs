@@ -79,6 +79,7 @@ namespace Nuclex.Windows.Forms {
       this.Controls.Add(this.statusLabel);
       this.Controls.Add(this.progressBar);
       this.Controls.Add(this.cancelButton);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "ProgressReporterForm";
