@@ -95,13 +95,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Documents\Nuclex.Windows.Forms.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Nuclex.Support\Nuclex.Support %28x86%29.csproj">
       <Project>{471344D7-583D-4B40-BAC4-4E85E77441A9}</Project>
       <Name>Nuclex.Support %28x86%29</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Documents\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
