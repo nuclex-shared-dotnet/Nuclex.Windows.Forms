@@ -37,8 +37,8 @@ namespace Nuclex.Windows.Forms {
       InitializeComponent();
 
       this.asyncEndedDelegate = new EventHandler(asyncEnded);
-      this.asyncProgressUpdatedDelegate = new EventHandler<ProgressUpdateEventArgs>(
-        asyncProgressUpdated
+      this.asyncProgressChangedDelegate = new EventHandler<ProgressReportEventArgs>(
+        asyncProgressChanged
       );
     }
 
@@ -48,7 +48,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="progression">
     ///   Progression for whose duration to show the progress reporter
     /// </param>
-    public static void Track(Progression progression) {
+    public static void Track(Waitable progression) {
       Track(null, progression);
     }
 
@@ -61,7 +61,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="progression">
     ///   Progression for whose duration to show the progress reporter
     /// </param>
-    public static void Track(string windowTitle, Progression progression) {
+    public static void Track(string windowTitle, Waitable progression) {
 
       // Small optimization to avoid the lengthy control creation when
       // the progression has already ended
@@ -94,7 +94,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="progression">
     ///   Progression for whose duration to show the progress reporter
     /// </param>
-    private void track(string windowTitle, Progression progression) {
+    private void track(string windowTitle, Waitable progression) {
 
       // Set the window title if the user wants to use a custom one
       if(windowTitle != null)
@@ -106,7 +106,9 @@ namespace Nuclex.Windows.Forms {
 
       // Subscribe the form to the progression it is supposed to monitor
       progression.AsyncEnded += this.asyncEndedDelegate;
-      progression.AsyncProgressUpdated += this.asyncProgressUpdatedDelegate;
+      IProgressReporter progressReporter = progression as IProgressReporter;
+      if(progressReporter != null)
+        progressReporter.AsyncProgressChanged += this.asyncProgressChangedDelegate;
 
       // The progression might have ended before this line was reached, if that's
       // the case, we don't show the dialog at all.
@@ -114,7 +116,9 @@ namespace Nuclex.Windows.Forms {
         ShowDialog();
 
       // We're done, unsubscribe from the progression's events again
-      progression.AsyncProgressUpdated -= this.asyncProgressUpdatedDelegate;
+      progressReporter = progression as IProgressReporter;
+      if(progressReporter != null)
+        progressReporter.AsyncProgressChanged -= this.asyncProgressChangedDelegate;
       progression.AsyncEnded -= this.asyncEndedDelegate;
 
     }
@@ -144,7 +148,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="arguments">
     ///   Contains the new progress achieved by the progression
     /// </param>
-    private void asyncProgressUpdated(object sender, ProgressUpdateEventArgs arguments) {
+    private void asyncProgressChanged(object sender, ProgressReportEventArgs arguments) {
 
       // See if this is the first progress update we're receiving. If yes, we need to
       // switch the progress bar from marquee into its normal mode!
@@ -205,7 +209,7 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Delegate for the asyncEnded() method</summary>
     private EventHandler asyncEndedDelegate;
     /// <summary>Delegate for the asyncProgressUpdated() method</summary>
-    private EventHandler<ProgressUpdateEventArgs> asyncProgressUpdatedDelegate;
+    private EventHandler<ProgressReportEventArgs> asyncProgressChangedDelegate;
     /// <summary>Whether the form can be closed and should be closed</summary>
     /// <remarks>
     ///   0: Nothing happened yet

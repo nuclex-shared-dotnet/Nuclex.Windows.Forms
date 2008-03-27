@@ -48,32 +48,32 @@ namespace Nuclex.Windows.Forms {
       this.asyncIdleStateChangedDelegate = new EventHandler<IdleStateEventArgs>(
         asyncIdleStateChanged
       );
-      this.asyncProgressUpdateDelegate = new EventHandler<ProgressUpdateEventArgs>(
+      this.asyncProgressUpdateDelegate = new EventHandler<ProgressReportEventArgs>(
         asyncProgressUpdated
       );
 
       // Create the tracker and attach ourselfes to its events
-      this.tracker = new ProgressionTracker();
+      this.tracker = new ProgressTracker();
       this.tracker.AsyncIdleStateChanged += this.asyncIdleStateChangedDelegate;
-      this.tracker.AsyncProgressUpdated += this.asyncProgressUpdateDelegate;
+      this.tracker.AsyncProgressChanged += this.asyncProgressUpdateDelegate;
     }
 
     /// <summary>Tracks the specified progression in the tracking bar</summary>
     /// <param name="progression">Progression to be tracked</param>
-    public void Track(Progression progression) {
+    public void Track(Waitable progression) {
       this.tracker.Track(progression);
     }
 
     /// <summary>Tracks the specified progression in the tracking bar</summary>
     /// <param name="progression">Progression to be tracked</param>
     /// <param name="weight">Weight of this progression in the total progress</param>
-    public void Track(Progression progression, float weight) {
+    public void Track(Waitable progression, float weight) {
       this.tracker.Track(progression, weight);
     }
 
     /// <summary>Stops tracking the specified progression</summary>
     /// <param name="progression">Progression to stop tracking</param>
-    public void Untrack(Progression progression) {
+    public void Untrack(Waitable progression) {
       this.tracker.Untrack(progression);
     }
 
@@ -83,7 +83,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="sender">Progression whose progress has changed</param>
     /// <param name="arguments">Contains the progress achieved by the progression</param>
     private void asyncProgressUpdated(
-      object sender, ProgressUpdateEventArgs arguments
+      object sender, ProgressReportEventArgs arguments
     ) {
       AsyncSetValue(arguments.Progress);
     }
@@ -120,13 +120,13 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Whether the progress bar is in the idle state</summary>
     private volatile bool isIdle;
     /// <summary>Tracker used to sum and update the total progress</summary>
-    private ProgressionTracker tracker;
+    private ProgressTracker tracker;
     /// <summary>Delegate for the idle state update method</summary>
     private MethodInvoker updateIdleStateDelegate;
     /// <summary>Delegate for the OnAsyncProgressionEnded method</summary>
     private EventHandler<IdleStateEventArgs> asyncIdleStateChangedDelegate;
     /// <summary>Delegate for the OnAsyncProgressionProgressUpdated method</summary>
-    private EventHandler<ProgressUpdateEventArgs> asyncProgressUpdateDelegate;
+    private EventHandler<ProgressReportEventArgs> asyncProgressUpdateDelegate;
 
   }
 

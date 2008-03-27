@@ -28,20 +28,20 @@ namespace Nuclex.Windows.Forms {
 
     /// <summary>Tracks the specified progression in the tracking bar</summary>
     /// <param name="progression">Progression to be tracked</param>
-    public void Track(Progression progression) {
+    public void Track(Waitable progression) {
       TrackingBarControl.Track(progression);
     }
 
     /// <summary>Tracks the specified progression in the tracking bar</summary>
     /// <param name="progression">Progression to be tracked</param>
     /// <param name="weight">Weight of this progression in the total progress</param>
-    public void Track(Progression progression, float weight) {
+    public void Track(Waitable progression, float weight) {
       TrackingBarControl.Track(progression, weight);
     }
 
     /// <summary>Stops tracking the specified progression</summary>
     /// <param name="progression">Progression to stop tracking</param>
-    public void Untrack(Progression progression) {
+    public void Untrack(Waitable progression) {
       TrackingBarControl.Untrack(progression);
     }
 
