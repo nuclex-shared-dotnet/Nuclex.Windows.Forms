@@ -104,6 +104,11 @@ namespace Nuclex.Windows.Forms {
       this.abortReceiver = (progression as IAbortable);
       this.cancelButton.Enabled = (this.abortReceiver != null);
 
+      // Make sure the progress bar control has been created (otherwise, we've got
+      // a chance that BeginInvoke() would fail if the first progress notification
+      // arrived before we called ShowDialog()!)
+      IntPtr tempDummy = this.progressBar.Handle;
+      
       // Subscribe the form to the progression it is supposed to monitor
       progression.AsyncEnded += this.asyncEndedDelegate;
       IProgressReporter progressReporter = progression as IProgressReporter;
