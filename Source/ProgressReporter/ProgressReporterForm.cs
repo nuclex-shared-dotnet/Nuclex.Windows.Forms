@@ -7,8 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 
-using Nuclex.Support.Tracking;
 using Nuclex.Support.Scheduling;
+using Nuclex.Support.Tracking;
 
 namespace Nuclex.Windows.Forms {
 
