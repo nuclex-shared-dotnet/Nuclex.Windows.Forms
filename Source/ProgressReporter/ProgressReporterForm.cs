@@ -14,7 +14,7 @@ namespace Nuclex.Windows.Forms {
 
   /// <summary>
   ///   Blocking progress dialog that prevents the user from accessing the application
-  ///   window during all-blocking background processes.
+  ///   window during a modal asynchronous processes.
   /// </summary>
   /// <example>
   ///   class Test : Nuclex.Support.Scheduling.ThreadOperation {
@@ -58,25 +58,27 @@ namespace Nuclex.Windows.Forms {
     /// <param name="windowTitle">
     ///   Text to be shown in the progress reporter's title bar
     /// </param>
-    /// <param name="progression">
-    ///   Progression for whose duration to show the progress reporter
+    /// <param name="waitable">
+    ///   Process for whose duration to show the progress reporter
     /// </param>
-    public static void Track(string windowTitle, Waitable progression) {
+    public static void Track(string windowTitle, Waitable waitable) {
 
-      // Small optimization to avoid the lengthy control creation when
-      // the progression has already ended
-      if(progression.Ended)
+      // Small optimization to avoid the lengthy control creation when the waitable
+      // process has already ended. This is an accepted race condition: If the process
+      // finishes right after this line, it doesn't change the outcome, it just
+      // causes the progress dialog to be constructed needlessly.
+      if(waitable.Ended)
         return;
 
       // Open the form and let it monitor the progression's state
       using(ProgressReporterForm theForm = new ProgressReporterForm()) {
-        theForm.track(windowTitle, progression);
+        theForm.track(windowTitle, waitable);
       }
 
     }
 
     /// <summary>Called when the user tries to close the form manually</summary>
-    /// <param name="e">Contains flag that can be used to abort the close attempt</param>
+    /// <param name="e">Contains a flag that can be used to abort the close attempt</param>
     protected override void OnClosing(CancelEventArgs e) {
       base.OnClosing(e);
 
@@ -91,40 +93,42 @@ namespace Nuclex.Windows.Forms {
     /// <param name="windowTitle">
     ///   Text to be shown in the progress reporter's title bar
     /// </param>
-    /// <param name="progression">
-    ///   Progression for whose duration to show the progress reporter
+    /// <param name="waitable">
+    ///   Waitable for whose duration to show the progress reporter
     /// </param>
-    private void track(string windowTitle, Waitable progression) {
+    private void track(string windowTitle, Waitable waitable) {
 
       // Set the window title if the user wants to use a custom one
       if(windowTitle != null)
         Text = windowTitle;
 
       // Only enable the cancel button if the progression can be aborted
-      this.abortReceiver = (progression as IAbortable);
+      this.abortReceiver = (waitable as IAbortable);
       this.cancelButton.Enabled = (this.abortReceiver != null);
 
       // Make sure the progress bar control has been created (otherwise, we've got
       // a chance that BeginInvoke() would fail if the first progress notification
       // arrived before we called ShowDialog()!)
-      IntPtr tempDummy = this.progressBar.Handle;
+      { IntPtr tempDummy = this.progressBar.Handle; }
       
-      // Subscribe the form to the progression it is supposed to monitor
-      progression.AsyncEnded += this.asyncEndedDelegate;
-      IProgressReporter progressReporter = progression as IProgressReporter;
+      // Subscribe the form to the progression it is supposed to monitor.
+      // Careful: With the new 'Waitable' design, this can cause the asyncEndedDelegate
+      // callback to be called immediately and synchronously!
+      waitable.AsyncEnded += this.asyncEndedDelegate;
+      IProgressReporter progressReporter = waitable as IProgressReporter;
       if(progressReporter != null)
         progressReporter.AsyncProgressChanged += this.asyncProgressChangedDelegate;
 
       // The progression might have ended before this line was reached, if that's
       // the case, we don't show the dialog at all.
-      if(!progression.Ended)
+      if(!waitable.Ended)
         ShowDialog();
 
       // We're done, unsubscribe from the progression's events again
-      progressReporter = progression as IProgressReporter;
+      progressReporter = waitable as IProgressReporter;
       if(progressReporter != null)
         progressReporter.AsyncProgressChanged -= this.asyncProgressChangedDelegate;
-      progression.AsyncEnded -= this.asyncEndedDelegate;
+      waitable.AsyncEnded -= this.asyncEndedDelegate;
 
     }
 
