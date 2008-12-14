@@ -58,51 +58,52 @@ namespace Nuclex.Windows.Forms {
       this.tracker.AsyncProgressChanged += this.asyncProgressUpdateDelegate;
     }
 
-    /// <summary>Tracks the specified progression in the tracking bar</summary>
-    /// <param name="progression">Progression to be tracked</param>
-    public void Track(Waitable progression) {
-      this.tracker.Track(progression);
+    /// <summary>Tracks the specified transaction in the tracking bar</summary>
+    /// <param name="transaction">Transaction to be tracked</param>
+    public void Track(Transaction transaction) {
+      this.tracker.Track(transaction);
     }
 
-    /// <summary>Tracks the specified progression in the tracking bar</summary>
-    /// <param name="progression">Progression to be tracked</param>
-    /// <param name="weight">Weight of this progression in the total progress</param>
-    public void Track(Waitable progression, float weight) {
-      this.tracker.Track(progression, weight);
+    /// <summary>Tracks the specified transaction in the tracking bar</summary>
+    /// <param name="transaction">Transaction to be tracked</param>
+    /// <param name="weight">Weight of this transaction in the total progress</param>
+    public void Track(Transaction transaction, float weight) {
+      this.tracker.Track(transaction, weight);
     }
 
-    /// <summary>Stops tracking the specified progression</summary>
-    /// <param name="progression">Progression to stop tracking</param>
-    public void Untrack(Waitable progression) {
-      this.tracker.Untrack(progression);
+    /// <summary>Stops tracking the specified transaction</summary>
+    /// <param name="transaction">Transaction to stop tracking</param>
+    public void Untrack(Transaction transaction) {
+      this.tracker.Untrack(transaction);
     }
 
     /// <summary>
-    ///   Called when the summed progressed of the tracked progressions has changed
+    ///   Called when the summed progressed of the tracked transaction has changed
     /// </summary>
-    /// <param name="sender">Progression whose progress has changed</param>
-    /// <param name="arguments">Contains the progress achieved by the progression</param>
+    /// <param name="sender">Transaction whose progress has changed</param>
+    /// <param name="arguments">Contains the progress achieved by the transaction</param>
     private void asyncProgressUpdated(
       object sender, ProgressReportEventArgs arguments
     ) {
       AsyncSetValue(arguments.Progress);
     }
-    
+
     /// <summary>Called when the tracker becomes enters of leaves the idle state</summary>
     /// <param name="sender">Tracker that has entered or left the idle state</param>
     /// <param name="arguments">Contains the new idle state</param>
     private void asyncIdleStateChanged(object sender, IdleStateEventArgs arguments) {
-      
+
       // Do a fully synchronous update of the idle state. This update must not be
       // lost because otherwise, the progress bar might stay on-screen when in fact,
       // the background operation has already finished and nothing is happening anymore.
       this.isIdle = arguments.Idle;
 
       // Update the bar's idle state
-      if(InvokeRequired)
+      if(InvokeRequired) {
         Invoke(this.updateIdleStateDelegate);
-      else
+      } else {
         updateIdleState();
+      }
 
     }
 
@@ -123,9 +124,9 @@ namespace Nuclex.Windows.Forms {
     private ProgressTracker tracker;
     /// <summary>Delegate for the idle state update method</summary>
     private MethodInvoker updateIdleStateDelegate;
-    /// <summary>Delegate for the OnAsyncProgressionEnded method</summary>
+    /// <summary>Delegate for the asyncIdleStateChanged() method</summary>
     private EventHandler<IdleStateEventArgs> asyncIdleStateChangedDelegate;
-    /// <summary>Delegate for the OnAsyncProgressionProgressUpdated method</summary>
+    /// <summary>Delegate for the asyncProgressUpdate() method</summary>
     private EventHandler<ProgressReportEventArgs> asyncProgressUpdateDelegate;
 
   }

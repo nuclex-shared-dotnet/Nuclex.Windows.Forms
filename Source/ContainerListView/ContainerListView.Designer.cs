@@ -47,6 +47,7 @@ namespace Nuclex.Windows.Forms {
     }
 
     #endregion
+
   }
 
 } // namespace Nuclex.Windows.Forms

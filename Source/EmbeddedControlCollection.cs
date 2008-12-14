@@ -80,7 +80,7 @@ namespace Nuclex.Windows.Forms {
       OnControlRemoved(value);
     }
 
-    // These three methods don't need to be override since their current implementations
+    // These three methods don't need an override since their current implementations
     // in the .NET Framework 2.0 all call the Remove() method on each individual control.
     // The ControlAdded/ControlRemoved events weren't in the original class and there
     // are other designs you could use to guarantee that removed controls get disposed

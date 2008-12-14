@@ -26,23 +26,23 @@ namespace Nuclex.Windows.Forms {
       get { return base.Control as TrackingBar; }
     }
 
-    /// <summary>Tracks the specified progression in the tracking bar</summary>
-    /// <param name="progression">Progression to be tracked</param>
-    public void Track(Waitable progression) {
-      TrackingBarControl.Track(progression);
+    /// <summary>Tracks the specified transaction in the tracking bar</summary>
+    /// <param name="transaction">Transaction to be tracked</param>
+    public void Track(Transaction transaction) {
+      TrackingBarControl.Track(transaction);
     }
 
-    /// <summary>Tracks the specified progression in the tracking bar</summary>
-    /// <param name="progression">Progression to be tracked</param>
-    /// <param name="weight">Weight of this progression in the total progress</param>
-    public void Track(Waitable progression, float weight) {
-      TrackingBarControl.Track(progression, weight);
+    /// <summary>Tracks the specified transaction in the tracking bar</summary>
+    /// <param name="transaction">Transaction to be tracked</param>
+    /// <param name="weight">Weight of this transaction in the total progress</param>
+    public void Track(Transaction transaction, float weight) {
+      TrackingBarControl.Track(transaction, weight);
     }
 
-    /// <summary>Stops tracking the specified progression</summary>
-    /// <param name="progression">Progression to stop tracking</param>
-    public void Untrack(Waitable progression) {
-      TrackingBarControl.Untrack(progression);
+    /// <summary>Stops tracking the specified transaction</summary>
+    /// <param name="transaction">Transaction to stop tracking</param>
+    public void Untrack(Transaction transaction) {
+      TrackingBarControl.Untrack(transaction);
     }
 
     /// <summary>Default size of the hosted control</summary>
@@ -82,8 +82,8 @@ namespace Nuclex.Windows.Forms {
     ///   visibility changes.
     /// </summary>
     /// <param name="sender">Tracking bar control whose visiblity has changed</param>
-    /// <param name="e">Not used</param>
-    private void trackingBarVisibleChanged(object sender, EventArgs e) {
+    /// <param name="arguments">Not used</param>
+    private void trackingBarVisibleChanged(object sender, EventArgs arguments) {
       base.Visible = TrackingBarControl.Visible;
     }
 

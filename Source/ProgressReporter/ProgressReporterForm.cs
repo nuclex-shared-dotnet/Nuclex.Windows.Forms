@@ -43,36 +43,36 @@ namespace Nuclex.Windows.Forms {
     }
 
     /// <summary>
-    ///   Shows the progress reporter until the specified progression has ended.
+    ///   Shows the progress reporter until the specified transaction has ended.
     /// </summary>
-    /// <param name="progression">
-    ///   Progression for whose duration to show the progress reporter
+    /// <param name="transaction">
+    ///   Transaction for whose duration to show the progress reporter
     /// </param>
-    public static void Track(Waitable progression) {
-      Track(null, progression);
+    public static void Track(Transaction transaction) {
+      Track(null, transaction);
     }
 
     /// <summary>
-    ///   Shows the progress reporter until the specified progression has ended.
+    ///   Shows the progress reporter until the specified transaction has ended.
     /// </summary>
     /// <param name="windowTitle">
     ///   Text to be shown in the progress reporter's title bar
     /// </param>
-    /// <param name="waitable">
+    /// <param name="transaction">
     ///   Process for whose duration to show the progress reporter
     /// </param>
-    public static void Track(string windowTitle, Waitable waitable) {
+    public static void Track(string windowTitle, Transaction transaction) {
 
-      // Small optimization to avoid the lengthy control creation when the waitable
+      // Small optimization to avoid the lengthy control creation when the background
       // process has already ended. This is an accepted race condition: If the process
       // finishes right after this line, it doesn't change the outcome, it just
       // causes the progress dialog to be constructed needlessly.
-      if(waitable.Ended)
+      if(transaction.Ended)
         return;
 
-      // Open the form and let it monitor the progression's state
+      // Open the form and let it monitor the transaction's state
       using(ProgressReporterForm theForm = new ProgressReporterForm()) {
-        theForm.track(windowTitle, waitable);
+        theForm.track(windowTitle, transaction);
       }
 
     }
@@ -83,57 +83,58 @@ namespace Nuclex.Windows.Forms {
       base.OnClosing(e);
 
       // Only allow the form to close when the form is ready to close and the
-      // progression being tracked has also finished.
+      // transaction being tracked has also finished.
       e.Cancel = (Thread.VolatileRead(ref this.state) < 2);
     }
 
     /// <summary>
-    ///   Shows the progress reporter until the specified progression has ended.
+    ///   Shows the progress reporter until the specified transaction has ended.
     /// </summary>
     /// <param name="windowTitle">
     ///   Text to be shown in the progress reporter's title bar
     /// </param>
-    /// <param name="waitable">
-    ///   Waitable for whose duration to show the progress reporter
+    /// <param name="transaction">
+    ///   Transaction for whose duration to show the progress reporter
     /// </param>
-    private void track(string windowTitle, Waitable waitable) {
+    private void track(string windowTitle, Transaction transaction) {
 
       // Set the window title if the user wants to use a custom one
       if(windowTitle != null)
         Text = windowTitle;
 
-      // Only enable the cancel button if the progression can be aborted
-      this.abortReceiver = (waitable as IAbortable);
+      // Only enable the cancel button if the transaction can be aborted
+      this.abortReceiver = (transaction as IAbortable);
       this.cancelButton.Enabled = (this.abortReceiver != null);
 
       // Make sure the progress bar control has been created (otherwise, we've got
       // a chance that BeginInvoke() would fail if the first progress notification
       // arrived before we called ShowDialog()!)
       { IntPtr tempDummy = this.progressBar.Handle; }
-      
-      // Subscribe the form to the progression it is supposed to monitor.
-      // Careful: With the new 'Waitable' design, this can cause the asyncEndedDelegate
+
+      // Subscribe the form to the transaction it is supposed to monitor.
+      // Careful: With the new design, this can cause the asyncEndedDelegate()
       // callback to be called immediately and synchronously!
-      waitable.AsyncEnded += this.asyncEndedDelegate;
-      IProgressReporter progressReporter = waitable as IProgressReporter;
+      transaction.AsyncEnded += this.asyncEndedDelegate;
+      IProgressReporter progressReporter = transaction as IProgressReporter;
       if(progressReporter != null)
         progressReporter.AsyncProgressChanged += this.asyncProgressChangedDelegate;
 
-      // The progression might have ended before this line was reached, if that's
+      // The transaction might have ended before this line was reached, if that's
       // the case, we don't show the dialog at all.
-      if(!waitable.Ended)
+      if(!transaction.Ended)
         ShowDialog();
 
-      // We're done, unsubscribe from the progression's events again
-      progressReporter = waitable as IProgressReporter;
-      if(progressReporter != null)
+      // We're done, unsubscribe from the transaction's events again
+      progressReporter = transaction as IProgressReporter;
+      if(progressReporter != null) {
         progressReporter.AsyncProgressChanged -= this.asyncProgressChangedDelegate;
-      waitable.AsyncEnded -= this.asyncEndedDelegate;
+      }
+      transaction.AsyncEnded -= this.asyncEndedDelegate;
 
     }
 
-    /// <summary>Called when the progression has ended</summary>
-    /// <param name="sender">Progression that has ended</param>
+    /// <summary>Called when the transaction has ended</summary>
+    /// <param name="sender">Transaction that has ended</param>
     /// <param name="arguments">Not used</param>
     private void asyncEnded(object sender, EventArgs arguments) {
 
@@ -143,19 +144,20 @@ namespace Nuclex.Windows.Forms {
 
         // Close the dialog. Ensure the Close() method is invoked from the
         // same thread the dialog was created in.
-        if(InvokeRequired)
+        if(InvokeRequired) {
           Invoke(new MethodInvoker(Close));
-        else
+        } else {
           Close();
+        }
 
       }
 
     }
 
-    /// <summary>Called when the tracked progression's progress updates</summary>
-    /// <param name="sender">Progression whose progress has been updated</param>
+    /// <summary>Called when the tracked transaction's progress updates</summary>
+    /// <param name="sender">Transaction whose progress has been updated</param>
     /// <param name="arguments">
-    ///   Contains the new progress achieved by the progression
+    ///   Contains the new progress achieved by the transaction
     /// </param>
     private void asyncProgressChanged(object sender, ProgressReportEventArgs arguments) {
 
@@ -178,8 +180,8 @@ namespace Nuclex.Windows.Forms {
     ///   close request arrives at an inappropriate time.
     /// </summary>
     /// <param name="sender">Timer that has ticked</param>
-    /// <param name="e">Not used</param>
-    private void controlCreationTimerTicked(object sender, EventArgs e) {
+    /// <param name="arguments">Not used</param>
+    private void controlCreationTimerTicked(object sender, EventArgs arguments) {
 
       // This timer is intended to run only once to find out when the dialog has
       // been fully constructed and is running its message pump. So we'll disable
@@ -188,8 +190,9 @@ namespace Nuclex.Windows.Forms {
 
       // If the new state is 2, then the form was requested to close before it had
       // been fully constructed, so we should close it now!
-      if(Interlocked.Increment(ref this.state) == 2)
+      if(Interlocked.Increment(ref this.state) == 2) {
         Close();
+      }
 
     }
 
@@ -197,8 +200,8 @@ namespace Nuclex.Windows.Forms {
     ///   Aborts the background operation when the user clicks the cancel button
     /// </summary>
     /// <param name="sender">Button that has been clicked</param>
-    /// <param name="e">Not used</param>
-    private void cancelClicked(object sender, EventArgs e) {
+    /// <param name="arguments">Not used</param>
+    private void cancelClicked(object sender, EventArgs arguments) {
 
       if(this.abortReceiver != null) {
 
@@ -226,10 +229,10 @@ namespace Nuclex.Windows.Forms {
     ///   2: Ready to close and close requested, triggers close
     /// </remarks>
     private int state;
-    /// <summary>Whether we're receiving progress updates from the progression</summary>
+    /// <summary>Whether we're receiving progress updates from the transaction</summary>
     /// <remarks>
     ///   0: No progress updates have arrived so far
-    ///   1: We have received at least one progress update from the progression
+    ///   1: We have received at least one progress update from the transaction
     /// </remarks>
     private int areProgressUpdatesIncoming;
     /// <summary>

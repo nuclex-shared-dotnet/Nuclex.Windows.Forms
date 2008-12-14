@@ -42,7 +42,7 @@ namespace Nuclex.Windows.Forms {
 
     /// <summary>Initializes a new ContainerListView</summary>
     public ContainerListView() {
-      this.embeddedControlClickedHandler = new EventHandler(embeddedControlClicked);
+      this.embeddedControlClickedDelegate = new EventHandler(embeddedControlClicked);
 
       this.embeddedControls = new ListViewEmbeddedControlCollection();
 
@@ -67,12 +67,12 @@ namespace Nuclex.Windows.Forms {
 
     /// <summary>Called when the list of embedded controls has been cleared</summary>
     /// <param name="sender">Collection that has been cleared of its controls</param>
-    /// <param name="e">Not used</param>
-    private void embeddedControlsClearing(object sender, EventArgs e) {
+    /// <param name="arguments">Not used</param>
+    private void embeddedControlsClearing(object sender, EventArgs arguments) {
       this.BeginUpdate();
       try {
         foreach(ListViewEmbeddedControl embeddedControl in this.embeddedControls) {
-          embeddedControl.Control.Click -= this.embeddedControlClickedHandler;
+          embeddedControl.Control.Click -= this.embeddedControlClickedDelegate;
           this.Controls.Remove(embeddedControl.Control);
         }
       }
@@ -83,30 +83,36 @@ namespace Nuclex.Windows.Forms {
 
     /// <summary>Called when a control gets removed from  the embedded controls list</summary>
     /// <param name="sender">List from which the control has been removed</param>
-    /// <param name="e">Event arguments providing a reference to the removed control</param>
+    /// <param name="arguments">
+    ///   Event arguments providing a reference to the removed control
+    /// </param>
     private void embeddedControlAdded(
-      object sender, ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs e
+      object sender,
+      ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs arguments
     ) {
-      e.EmbeddedControl.Control.Click += this.embeddedControlClickedHandler;
-      this.Controls.Add(e.EmbeddedControl.Control);
+      arguments.EmbeddedControl.Control.Click += this.embeddedControlClickedDelegate;
+      this.Controls.Add(arguments.EmbeddedControl.Control);
     }
 
     /// <summary>Called when a control gets added to the embedded controls list</summary>
     /// <param name="sender">List to which the control has been added</param>
-    /// <param name="e">Event arguments providing a reference to the added control</param>
+    /// <param name="arguments">
+    ///   Event arguments providing a reference to the added control
+    /// </param>
     private void embeddedControlRemoved(
-      object sender, ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs e
+      object sender,
+      ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs arguments
     ) {
-      if(this.Controls.Contains(e.EmbeddedControl.Control)) {
-        e.EmbeddedControl.Control.Click -= this.embeddedControlClickedHandler;
-        this.Controls.Remove(e.EmbeddedControl.Control);
+      if(this.Controls.Contains(arguments.EmbeddedControl.Control)) {
+        arguments.EmbeddedControl.Control.Click -= this.embeddedControlClickedDelegate;
+        this.Controls.Remove(arguments.EmbeddedControl.Control);
       }
     }
 
     /// <summary>Called when an embedded control has been clicked on</summary>
     /// <param name="sender">Embedded control that has been clicked</param>
-    /// <param name="e">Not used</param>
-    private void embeddedControlClicked(object sender, EventArgs e) {
+    /// <param name="arguments">Not used</param>
+    private void embeddedControlClicked(object sender, EventArgs arguments) {
       this.BeginUpdate();
 
       try {
@@ -174,7 +180,7 @@ namespace Nuclex.Windows.Forms {
     }
 
     /// <summary>Event handler for when embedded controls are clicked on</summary>
-    private EventHandler embeddedControlClickedHandler;
+    private EventHandler embeddedControlClickedDelegate;
     /// <summary>Controls being embedded in this ListView</summary>
     private ListViewEmbeddedControlCollection embeddedControls;
 
