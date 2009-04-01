@@ -78,13 +78,15 @@ namespace Nuclex.Windows.Forms {
     }
 
     /// <summary>Called when the user tries to close the form manually</summary>
-    /// <param name="e">Contains a flag that can be used to abort the close attempt</param>
-    protected override void OnClosing(CancelEventArgs e) {
-      base.OnClosing(e);
+    /// <param name="arguments">
+    ///   Contains a flag that can be used to abort the close attempt
+    /// </param>
+    protected override void OnClosing(CancelEventArgs arguments) {
+      base.OnClosing(arguments);
 
       // Only allow the form to close when the form is ready to close and the
       // transaction being tracked has also finished.
-      e.Cancel = (Thread.VolatileRead(ref this.state) < 2);
+      arguments.Cancel = (Thread.VolatileRead(ref this.state) < 2);
     }
 
     /// <summary>

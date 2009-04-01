@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BDC43D2A-7638-412E-976A-E7E115803A27}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -79,7 +79,6 @@
       <DependentUpon>ContainerListView.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\ContainerListView\ListViewEmbeddedControl.cs" />
-    <Compile Include="Source\ContainerListView\ListViewEmbeddedControlCollection.cs" />
     <Compile Include="Source\EmbeddedControlCollection.cs" />
     <Compile Include="Source\ProgressReporter\ProgressReporterForm.cs">
       <SubType>Form</SubType>

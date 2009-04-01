@@ -27,6 +27,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+using Nuclex.Support.Collections;
+
 namespace Nuclex.Windows.Forms {
 
   /// <summary>ListView allowing for other controls to be embedded in its cells</summary>
@@ -44,20 +46,13 @@ namespace Nuclex.Windows.Forms {
     public ContainerListView() {
       this.embeddedControlClickedDelegate = new EventHandler(embeddedControlClicked);
 
-      this.embeddedControls = new ListViewEmbeddedControlCollection();
+      this.embeddedControls = new ObservableCollection<ListViewEmbeddedControl>();
 
-      this.embeddedControls.Added +=
-        new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
-          embeddedControlAdded
-        );
-
-      this.embeddedControls.Removed +=
-        new EventHandler<ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs>(
-          embeddedControlRemoved
-        );
-
-      this.embeddedControls.Clearing +=
-        new EventHandler(embeddedControlsClearing);
+      this.embeddedControls.ItemAdded +=
+        new EventHandler<ItemEventArgs<ListViewEmbeddedControl>>(embeddedControlAdded);
+      this.embeddedControls.ItemRemoved +=
+        new EventHandler<ItemEventArgs<ListViewEmbeddedControl>>(embeddedControlRemoved);
+      this.embeddedControls.Clearing += new EventHandler(embeddedControlsClearing);
 
       InitializeComponent();
 
@@ -88,10 +83,10 @@ namespace Nuclex.Windows.Forms {
     /// </param>
     private void embeddedControlAdded(
       object sender,
-      ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs arguments
+      ItemEventArgs<ListViewEmbeddedControl> arguments
     ) {
-      arguments.EmbeddedControl.Control.Click += this.embeddedControlClickedDelegate;
-      this.Controls.Add(arguments.EmbeddedControl.Control);
+      arguments.Item.Control.Click += this.embeddedControlClickedDelegate;
+      this.Controls.Add(arguments.Item.Control);
     }
 
     /// <summary>Called when a control gets added to the embedded controls list</summary>
@@ -101,11 +96,11 @@ namespace Nuclex.Windows.Forms {
     /// </param>
     private void embeddedControlRemoved(
       object sender,
-      ListViewEmbeddedControlCollection.ListViewEmbeddedControlEventArgs arguments
+      ItemEventArgs<ListViewEmbeddedControl> arguments
     ) {
-      if(this.Controls.Contains(arguments.EmbeddedControl.Control)) {
-        arguments.EmbeddedControl.Control.Click -= this.embeddedControlClickedDelegate;
-        this.Controls.Remove(arguments.EmbeddedControl.Control);
+      if(this.Controls.Contains(arguments.Item.Control)) {
+        arguments.Item.Control.Click -= this.embeddedControlClickedDelegate;
+        this.Controls.Remove(arguments.Item.Control);
       }
     }
 
@@ -182,7 +177,7 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Event handler for when embedded controls are clicked on</summary>
     private EventHandler embeddedControlClickedDelegate;
     /// <summary>Controls being embedded in this ListView</summary>
-    private ListViewEmbeddedControlCollection embeddedControls;
+    private ObservableCollection<ListViewEmbeddedControl> embeddedControls;
 
   }
 
