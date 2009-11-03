@@ -17,18 +17,24 @@ namespace Nuclex.Windows.Forms {
   ///   window during a modal asynchronous processes.
   /// </summary>
   /// <example>
-  ///   class Test : Nuclex.Support.Scheduling.ThreadOperation {
-  ///     static void Main() {
-  ///       Test myTest = new Test();
-  ///       myTest.Begin();
-  ///       Nuclex.Windows.Forms.ProgressReporterForm.Track(myTest);
-  ///       myTest.End();
+  ///   <code>
+  ///     class Test : Nuclex.Support.Scheduling.ThreadOperation {
+  ///
+  ///       static void Main() {
+  ///         Test myTest = new Test();
+  ///         myTest.Begin();
+  ///         Nuclex.Windows.Forms.ProgressReporterForm.Track(myTest);
+  ///         myTest.End();
+  ///       }
+  ///
+  ///       protected override void Execute() {
+  ///         for(int i = 0; i &lt; 10000000; ++i) {
+  ///           OnAsyncProgressUpdated((float)i / 10000000.0f);
+  ///         }
+  ///       }
+  ///
   ///     }
-  ///     protected override void Execute() {
-  ///       for(int i = 0; i &lt; 10000000; ++i)
-  ///         OnAsyncProgressUpdated((float)i / 10000000.0f);
-  ///     }
-  ///   }
+  ///   </code>
   /// </example>
   public partial class ProgressReporterForm : Form {
 

@@ -33,14 +33,28 @@ namespace Nuclex.Windows.Forms {
 
   /// <summary>ListView allowing for other controls to be embedded in its cells</summary>
   /// <remarks>
-  ///   There basically were two possible design choices: Provide a specialized
-  ///   ListViewSubItem that carries a Control instead of a string or manage the
-  ///   embedded controls seperate of the ListView's items. The first option
-  ///   would require a complete rewrite of the ListViewItem class and its related
-  ///   support classes, all of which are surprisingly large and complex. Thus,
-  ///   I chose the less clean but more doable latter option.
+  ///   <para>
+  ///     There basically were two possible design choices: Provide a specialized
+  ///     ListViewSubItem that carries a Control instead of a string or manage the
+  ///     embedded controls seperate of the ListView's items.
+  ///   </para>
+  ///   <para>
+  ///     The first option requires a complete rewrite of the ListViewItem class
+  ///     and its related support classes, all of which are surprisingly large and
+  ///     complex. Thus, I chose the less clean but more doable latter option.
+  ///   </para>
+  ///   <para>
+  ///     This control is useful for simple item lists where you want to provide
+  ///     a combobox, checkbox or other control to the user for a certain column.
+  ///     It will not perform well for lists with hundreds of items since it
+  ///     requires a control to be created per row and management of the embedded
+  ///     controls is designed for limited usage.
+  ///   </para>
   /// </remarks>
   public partial class ContainerListView : System.Windows.Forms.ListView {
+
+    /// <summary>Message sent to a control to let it paint itself</summary>
+    private const int WM_PAINT = 0x000F;
 
     /// <summary>Initializes a new ContainerListView</summary>
     public ContainerListView() {
@@ -57,7 +71,86 @@ namespace Nuclex.Windows.Forms {
       InitializeComponent();
 
       base.View = View.Details;
-      base.AllowColumnReorder = false;
+
+      this.columnHeaderHeight = Font.Height;
+    }
+
+    /// <summary>Controls being embedded in the ListView</summary>
+    public ICollection<ListViewEmbeddedControl> EmbeddedControls {
+      get { return this.embeddedControls; }
+    }
+
+    /// <summary>Updates the controls embeded into the list view</summary>
+    public void UpdateEmbeddedControls() {
+      if(View != View.Details) {
+        for(int index = 0; index < this.embeddedControls.Count; ++index) {
+          this.embeddedControls[index].Control.Visible = false;
+        }
+      } else {
+        for(int index = 0; index < this.embeddedControls.Count; ++index) {
+          ListViewEmbeddedControl embeddedControl = this.embeddedControls[index];
+
+          Rectangle cellBounds = this.GetSubItemBounds(
+            Items[embeddedControl.Row], embeddedControl.Column
+          );
+
+          bool intersectsColumnHeader =
+            (base.HeaderStyle != ColumnHeaderStyle.None) &&
+            (cellBounds.Top < base.Font.Height);
+
+          embeddedControl.Control.Visible = !intersectsColumnHeader;
+          embeddedControl.Control.Bounds = cellBounds;
+        }
+      }
+    }
+
+    /// <summary>Calculates the boundaries of a cell in the list view</summary>
+    /// <param name="item">Item in the list view from which to calculate the cell</param>
+    /// <param name="subItem">Index der cell whose boundaries to calculate</param>
+    /// <returns>The boundaries of the specified list view cell</returns>
+    /// <exception cref="IndexOutOfRangeException">
+    ///   When the specified sub item index is not in the range of valid sub items
+    /// </exception>
+    protected Rectangle GetSubItemBounds(ListViewItem item, int subItem) {
+      int[] order = GetColumnOrder();
+      if(order == null) // No Columns
+        return Rectangle.Empty;
+
+      if(subItem >= order.Length)
+        throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
+
+      // Determine the border of the entire ListViewItem, including all sub items
+      Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
+      int subItemX = itemBounds.Left;
+
+      // Find the horizontal position of the sub item. Because the column order can vary,
+      // we need to use Columns[order[i]] instead of simply doing Columns[i] here!
+      ColumnHeader columnHeader;
+      int i;
+      for(i = 0; i < order.Length; ++i) {
+        columnHeader = this.Columns[order[i]];
+        if(columnHeader.Index == subItem)
+          break;
+
+        subItemX += columnHeader.Width;
+      }
+
+      return new Rectangle(
+        subItemX, itemBounds.Top, this.Columns[order[i]].Width, itemBounds.Height
+      );
+    }
+
+    /// <summary>Responds to window messages sent by the operating system</summary>
+    /// <param name="message">Window message that will be processed</param>
+    protected override void WndProc(ref Message message) {
+      switch(message.Msg) {
+        case WM_PAINT: {
+          UpdateEmbeddedControls();
+          break;
+        }
+      }
+
+      base.WndProc(ref message);
     }
 
     /// <summary>Called when the list of embedded controls has been cleared</summary>
@@ -82,8 +175,7 @@ namespace Nuclex.Windows.Forms {
     ///   Event arguments providing a reference to the removed control
     /// </param>
     private void embeddedControlAdded(
-      object sender,
-      ItemEventArgs<ListViewEmbeddedControl> arguments
+      object sender, ItemEventArgs<ListViewEmbeddedControl> arguments
     ) {
       arguments.Item.Control.Click += this.embeddedControlClickedDelegate;
       this.Controls.Add(arguments.Item.Control);
@@ -95,8 +187,7 @@ namespace Nuclex.Windows.Forms {
     ///   Event arguments providing a reference to the added control
     /// </param>
     private void embeddedControlRemoved(
-      object sender,
-      ItemEventArgs<ListViewEmbeddedControl> arguments
+      object sender, ItemEventArgs<ListViewEmbeddedControl> arguments
     ) {
       if(this.Controls.Contains(arguments.Item.Control)) {
         arguments.Item.Control.Click -= this.embeddedControlClickedDelegate;
@@ -125,44 +216,6 @@ namespace Nuclex.Windows.Forms {
       }
     }
 
-    /// <summary>Calculates the boundaries of a cell in the list view</summary>
-    /// <param name="item">Item in the list view from which to calculate the cell</param>
-    /// <param name="subItem">Index der cell whose boundaries to calculate</param>
-    /// <returns>The boundaries of the specified list view cell</returns>
-    /// <exception cref="IndexOutOfRangeException">
-    ///   When the specified sub item index is not in the range of valid sub items
-    /// </exception>
-    protected Rectangle GetSubItemBounds(ListViewItem item, int subItem) {
-
-      int[] order = GetColumnOrder();
-      if(order == null) // No Columns
-        return Rectangle.Empty;
-
-      if(subItem >= order.Length)
-        throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
-
-      // Determine the border of the entire ListViewItem, including all sub items
-      Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
-      int subItemX = itemBounds.Left;
-
-      // Find the horizontal position of the sub item. Because the column order can vary,
-      // we need to use Columns[order[i]] instead of simply doing Columns[i] here!
-      ColumnHeader columnHeader;
-      int i;
-      for(i = 0; i < order.Length; ++i) {
-        columnHeader = this.Columns[order[i]];
-        if(columnHeader.Index == subItem)
-          break;
-
-        subItemX += columnHeader.Width;
-      }
-
-      return new Rectangle(
-        subItemX, itemBounds.Top, this.Columns[order[i]].Width, itemBounds.Height
-      );
-
-    }
-
     /// <summary>Obtains the current column order of the list</summary>
     /// <returns>An array indicating the order of the list's columns</returns>
     private int[] GetColumnOrder() {
@@ -174,6 +227,8 @@ namespace Nuclex.Windows.Forms {
       return order;
     }
 
+    /// <summary>Height of the list view's column header</summary>
+    private int columnHeaderHeight;
     /// <summary>Event handler for when embedded controls are clicked on</summary>
     private EventHandler embeddedControlClickedDelegate;
     /// <summary>Controls being embedded in this ListView</summary>

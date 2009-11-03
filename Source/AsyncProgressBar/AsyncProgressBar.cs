@@ -38,16 +38,16 @@ namespace Nuclex.Windows.Forms {
       // whenever I see it :)
       Interlocked.Exchange(ref this.newProgress, -1.0f);
     }
-
+    
     /// <summary>Called when the progress bar is being disposed</summary>
     /// <param name="sender">Progress bar that is being disposed</param>
     /// <param name="arguments">Not used</param>
     private void progressBarDisposed(object sender, EventArgs arguments) {
 
       // CHECK: This method is only called on an explicit Dispose() of the control.
-      //        Microsoft officially states that it's allowed to call Control.BeginInvoke()
-      //        without calling Control.EndInvoke(), so this code is quite correct,
-      //        but is it also clean? :>
+      //   It is legal to call Control.BeginInvoke() without calling Control.EndInvoke(),
+      //   so the code is quite correct even if no Dispose() occurs, but is it also clean?
+      //   http://www.interact-sw.co.uk/iangblog/2005/05/16/endinvokerequired
 
       // Since this has to occur in the UI thread, there's no way that updateProgress()
       // could be executing just now. But the final call to updateProgress() will not
