@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -89,7 +89,6 @@
       <DependentUpon>ContainerListView.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\ContainerListView\ListViewEmbeddedControl.cs" />
-    <Compile Include="Source\EmbeddedControlCollection.cs" />
     <Compile Include="Source\ProgressReporter\ProgressReporterForm.cs">
       <SubType>Form</SubType>
     </Compile>

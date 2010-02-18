@@ -61,7 +61,6 @@ namespace Nuclex.Windows.Forms {
       this.embeddedControlClickedDelegate = new EventHandler(embeddedControlClicked);
 
       this.embeddedControls = new ObservableCollection<ListViewEmbeddedControl>();
-
       this.embeddedControls.ItemAdded +=
         new EventHandler<ItemEventArgs<ListViewEmbeddedControl>>(embeddedControlAdded);
       this.embeddedControls.ItemRemoved +=
@@ -69,6 +68,10 @@ namespace Nuclex.Windows.Forms {
       this.embeddedControls.Clearing += new EventHandler(embeddedControlsClearing);
 
       InitializeComponent();
+      
+      // Eliminate flickering
+      SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+      SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
       base.View = View.Details;
 
