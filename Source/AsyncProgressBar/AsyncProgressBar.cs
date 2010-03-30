@@ -34,8 +34,7 @@ namespace Nuclex.Windows.Forms {
 
       // Could probably use VolatileWrite() as well, but for consistency reasons
       // this is an Interlocked call, too. Mixing different synchronization measures
-      // for a variable causes trouble so often that this raises a red flag
-      // whenever I see it :)
+      // for a variable raises a red flag whenever I see it :)
       Interlocked.Exchange(ref this.newProgress, -1.0f);
     }
     
