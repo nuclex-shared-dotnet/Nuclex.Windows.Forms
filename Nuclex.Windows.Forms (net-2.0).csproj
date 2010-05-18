@@ -37,20 +37,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\net-2.0\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;UNITTEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Documents\Nuclex.Windows.Forms.xml</DocumentationFile>
+    <DocumentationFile>bin\net-2.0\Debug\Nuclex.Windows.Forms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\net-2.0\Release\</OutputPath>
     <DefineConstants>TRACE;UNITTEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Documents\Nuclex.Windows.Forms.xml</DocumentationFile>
+    <DocumentationFile>bin\net-2.0\Release\Nuclex.Windows.Forms.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.5.0.9122, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -128,9 +128,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nuclex.Support\Nuclex.Support.csproj">
+    <ProjectReference Include="..\Nuclex.Support\Nuclex.Support %28net-2.0%29.csproj">
       <Project>{9118C4C7-DC1E-4BFB-A99D-2A22B7590D7F}</Project>
-      <Name>Nuclex.Support</Name>
+      <Name>Nuclex.Support %28net-2.0%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
