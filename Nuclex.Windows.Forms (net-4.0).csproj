@@ -95,6 +95,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nuclex.Support.Transactions\Nuclex.Support.Transactions %28net-4.0%29.csproj">
+      <Project>{2F487C4D-8E06-496F-BCD5-7119B18C78D8}</Project>
+      <Name>Nuclex.Support.Transactions %28net-4.0%29</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nuclex.Support\Nuclex.Support %28net-4.0%29.csproj">
       <Project>{00567408-4F44-4C00-866E-B04A99E482F2}</Project>
       <Name>Nuclex.Support %28net-4.0%29</Name>
