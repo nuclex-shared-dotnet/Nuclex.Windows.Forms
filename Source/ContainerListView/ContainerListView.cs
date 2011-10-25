@@ -60,7 +60,7 @@ namespace Nuclex.Windows.Forms {
     public ContainerListView() {
       this.embeddedControlClickedDelegate = new EventHandler(embeddedControlClicked);
 
-      this.embeddedControls = new ObservableCollection<ListViewEmbeddedControl>();
+      this.embeddedControls = new ObservableList<ListViewEmbeddedControl>();
       this.embeddedControls.ItemAdded +=
         new EventHandler<ItemEventArgs<ListViewEmbeddedControl>>(embeddedControlAdded);
       this.embeddedControls.ItemRemoved +=
@@ -235,7 +235,7 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Event handler for when embedded controls are clicked on</summary>
     private EventHandler embeddedControlClickedDelegate;
     /// <summary>Controls being embedded in this ListView</summary>
-    private ObservableCollection<ListViewEmbeddedControl> embeddedControls;
+    private ObservableList<ListViewEmbeddedControl> embeddedControls;
 
   }
 
