@@ -31,13 +31,13 @@ using Nuclex.Support;
 namespace Nuclex.Windows.Forms {
 
   /// <summary>Unit Test for the asynchronously updating progress bar</summary>
-  [TestFixture]
+  [TestFixture, Explicit]
   public class AsyncProgressBarTest {
 
     /// <summary>
     ///   Verifies that asynchronous progress assignment is working
     /// </summary>
-    [Test, Explicit]
+    [Test]
     public void TestProgressAssignment() {
       using(AsyncProgressBar progressBar = new AsyncProgressBar()) {
 
