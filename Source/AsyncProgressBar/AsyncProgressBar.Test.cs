@@ -37,7 +37,7 @@ namespace Nuclex.Windows.Forms {
     /// <summary>
     ///   Verifies that asynchronous progress assignment is working
     /// </summary>
-    [Test]
+    [Test, Explicit]
     public void TestProgressAssignment() {
       using(AsyncProgressBar progressBar = new AsyncProgressBar()) {
 
