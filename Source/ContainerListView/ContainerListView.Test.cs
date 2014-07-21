@@ -31,7 +31,7 @@ using Nuclex.Support;
 namespace Nuclex.Windows.Forms {
 
   /// <summary>Unit Test for the control container list view</summary>
-  [TestFixture]
+  [TestFixture, Explicit]
   public class ContainerListViewTest {
 
     /// <summary>
