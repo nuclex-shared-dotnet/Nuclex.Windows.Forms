@@ -1,7 +1,7 @@
 #region CPL License
 /*
 Nuclex Framework
-Copyright (C) 2002-2007 Nuclex Development Labs
+Copyright (C) 2002-2019 Nuclex Development Labs
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the IBM Common Public License as
@@ -116,11 +116,13 @@ namespace Nuclex.Windows.Forms {
     /// </exception>
     protected Rectangle GetSubItemBounds(ListViewItem item, int subItem) {
       int[] order = GetColumnOrder();
-      if(order == null) // No Columns
+      if(order == null) { // No Columns
         return Rectangle.Empty;
+      }
 
-      if(subItem >= order.Length)
+      if(subItem >= order.Length) {
         throw new IndexOutOfRangeException("SubItem " + subItem + " out of range");
+      }
 
       // Determine the border of the entire ListViewItem, including all sub items
       Rectangle itemBounds = item.GetBounds(ItemBoundsPortion.Entire);
@@ -132,8 +134,9 @@ namespace Nuclex.Windows.Forms {
       int i;
       for(i = 0; i < order.Length; ++i) {
         columnHeader = this.Columns[order[i]];
-        if(columnHeader.Index == subItem)
+        if(columnHeader.Index == subItem) {
           break;
+        }
 
         subItemX += columnHeader.Width;
       }
@@ -209,8 +212,9 @@ namespace Nuclex.Windows.Forms {
 
         foreach(ListViewEmbeddedControl embeddedControl in this.embeddedControls) {
           if(ReferenceEquals(embeddedControl.Control, sender)) {
-            if((embeddedControl.Row > 0) && (embeddedControl.Row < Items.Count))
+            if((embeddedControl.Row > 0) && (embeddedControl.Row < Items.Count)) {
               Items[embeddedControl.Row].Selected = true;
+            }
           }
         }
       }
@@ -224,8 +228,9 @@ namespace Nuclex.Windows.Forms {
     private int[] GetColumnOrder() {
       int[] order = new int[this.Columns.Count];
 
-      for(int i = 0; i < this.Columns.Count; ++i)
-        order[this.Columns[i].DisplayIndex] = i;
+      for(int index = 0; index < this.Columns.Count; ++index) {
+        order[this.Columns[index].DisplayIndex] = index;
+      }
 
       return order;
     }

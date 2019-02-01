@@ -1,11 +1,27 @@
+#region CPL License
+/*
+Nuclex Framework
+Copyright (C) 2002-2019 Nuclex Development Labs
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the IBM Common Public License as
+published by the IBM Corporation; either version 1.0 of the
+License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+IBM Common Public License for more details.
+
+You should have received a copy of the IBM Common Public
+License along with this library
+*/
+#endregion
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms;
 
 using Nuclex.Support.Scheduling;
 using Nuclex.Support.Tracking;
@@ -73,8 +89,9 @@ namespace Nuclex.Windows.Forms {
       // process has already ended. This is an accepted race condition: If the process
       // finishes right after this line, it doesn't change the outcome, it just
       // causes the progress dialog to be constructed needlessly.
-      if(transaction.Ended)
+      if(transaction.Ended) {
         return;
+      }
 
       // Open the form and let it monitor the transaction's state
       using(ProgressReporterForm theForm = new ProgressReporterForm()) {
@@ -107,8 +124,9 @@ namespace Nuclex.Windows.Forms {
     private void track(string windowTitle, Transaction transaction) {
 
       // Set the window title if the user wants to use a custom one
-      if(windowTitle != null)
+      if(windowTitle != null) {
         Text = windowTitle;
+      }
 
       // Only enable the cancel button if the transaction can be aborted
       this.abortReceiver = (transaction as IAbortable);
@@ -124,8 +142,9 @@ namespace Nuclex.Windows.Forms {
       // callback to be called immediately and synchronously!
       transaction.AsyncEnded += this.asyncEndedDelegate;
       IProgressReporter progressReporter = transaction as IProgressReporter;
-      if(progressReporter != null)
+      if(progressReporter != null) {
         progressReporter.AsyncProgressChanged += this.asyncProgressChangedDelegate;
+      }
 
       // The transaction might have ended before this line was reached, if that's
       // the case, we don't show the dialog at all.

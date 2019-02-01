@@ -1,3 +1,23 @@
+#region CPL License
+/*
+Nuclex Framework
+Copyright (C) 2002-2019 Nuclex Development Labs
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the IBM Common Public License as
+published by the IBM Corporation; either version 1.0 of the
+License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+IBM Common Public License for more details.
+
+You should have received a copy of the IBM Common Public
+License along with this library
+*/
+#endregion
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -53,8 +73,9 @@ namespace Nuclex.Windows.Forms {
     /// <summary>Default margin to leave around the control in the tool strip</summary>
     protected override Padding DefaultMargin {
       get {
-        if((base.Owner != null) && (base.Owner is StatusStrip))
+        if((base.Owner != null) && (base.Owner is StatusStrip)) {
           return new Padding(1, 3, 1, 3);
+        }
 
         return new Padding(1, 2, 1, 1);
       }
@@ -73,8 +94,9 @@ namespace Nuclex.Windows.Forms {
       TrackingBarControl.VisibleChanged += new EventHandler(trackingBarVisibleChanged);
 
       LicenseUsageMode usageMode = System.ComponentModel.LicenseManager.UsageMode;
-      if(usageMode == LicenseUsageMode.Runtime)
+      if(usageMode == LicenseUsageMode.Runtime) {
         base.Visible = false;
+      }
     }
 
     /// <summary>
