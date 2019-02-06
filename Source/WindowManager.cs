@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Nuclex.Support;
+using Nuclex.Windows.Forms.AutoBinding;
 using Nuclex.Windows.Forms.Views;
 
 namespace Nuclex.Windows.Forms {
@@ -31,8 +32,56 @@ namespace Nuclex.Windows.Forms {
   /// <summary>Manages an application's windows and views</summary>
   public class WindowManager : Observable, IWindowManager {
 
+    #region class CancellableDisposer
+
+    /// <summary>Disposes an object that potentially implements IDisposable</summary>
+    private struct CancellableDisposer : IDisposable {
+
+      /// <summary>Initializes a new cancellable disposer</summary>
+      /// <param name="potentiallyDisposable">
+      ///   Object that potentially implements IDisposable
+      /// </param>
+      public CancellableDisposer(object potentiallyDisposable = null) {
+        this.potentiallyDisposable = potentiallyDisposable;
+      }
+
+      /// <summary>
+      ///   Disposes the assigned object if the disposer has not been cancelled
+      /// </summary>
+      public void Dispose() {
+        var disposable = this.potentiallyDisposable as IDisposable;
+        if(disposable != null) {
+          disposable.Dispose();
+        }
+      }
+
+      /// <summary>Cancels the call to Dispose(), keeping the object alive</summary>
+      public void Dismiss() {
+        this.potentiallyDisposable = null;
+      }
+
+      /// <summary>Assigns a new potentially disposable object</summary>
+      /// <param name="potentiallyDisposable">
+      ///   Potentially disposable object that the disposer will dispose
+      /// </param>
+      public void Set(object potentiallyDisposable) {
+        this.potentiallyDisposable = potentiallyDisposable;
+      }
+
+      /// <summary>Object that will be disposed unless the disposer is cancelled</summary>
+      private object potentiallyDisposable;
+
+    }
+
+    #endregion // class CancellableDisposer
+
     /// <summary>Initializes a new window manager</summary>
-    public WindowManager() {
+    /// <param name="autoBinder">
+    ///   View model binder that will be used to bind all created views to their models
+    /// </param>
+    public WindowManager(IAutoBinder autoBinder = null) {
+      this.autoBinder = autoBinder;
+
       this.rootWindowActivatedDelegate = rootWindowActivated;
       this.rootWindowClosedDelegate = rootWindowClosed;
       this.viewTypesForViewModels = new ConcurrentDictionary<Type, Type>();
@@ -74,7 +123,7 @@ namespace Nuclex.Windows.Forms {
       // when we're done (but still allow the user to change his mind)
       if((viewModel == null) || disposeOnClose) {
         window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
-                                                //window.SetValue(DisposeViewModelOnCloseProperty, true);
+        //window.SetValue(DisposeViewModelOnCloseProperty, true);
       }
 
       window.Show();
@@ -107,7 +156,7 @@ namespace Nuclex.Windows.Forms {
         // when we're done (but still allow the user to change his mind)
         if((viewModel == null) || disposeOnClose) {
           window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
-                                                  //window.SetValue(DisposeViewModelOnCloseProperty, true);
+          //window.SetValue(DisposeViewModelOnCloseProperty, true);
         }
 
         DialogResult result = window.ShowDialog(this.activeWindow);
@@ -149,27 +198,42 @@ namespace Nuclex.Windows.Forms {
     ) where TViewModel : class {
       Type viewType = LocateViewForViewModel(typeof(TViewModel));
       Control viewControl = (Control)CreateInstance(viewType);
+      using(var viewDisposer = new CancellableDisposer(viewControl)) {
 
-      bool createdViewModel = false;
-      try {
-        IView viewControlAsView = viewControl as IView;
-        if(viewControlAsView != null) {
-          if(viewModel != null) {
+        // Create a view model if none was provided, and in either case assign
+        // the view model to the view (provided it implements IView).
+        using(var viewModelDisposer = new CancellableDisposer()) {
+          IView viewControlAsView = viewControl as IView;
+          if(viewModel == null) { // No view model provided, create one
+            if(viewControlAsView == null) { // View doesn't implement IView
+              viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
+              viewModelDisposer.Set(viewModel);
+            } else if(viewControlAsView.DataContext == null) { // View has no view model
+              viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
+              viewModelDisposer.Set(viewModel);
+              viewControlAsView.DataContext = viewModel;
+            } else { // There's an existing view model
+              viewModel = viewControlAsView.DataContext as TViewModel;
+              if(viewModel == null) { // The existing view model is another type
+                viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
+                viewModelDisposer.Set(viewModel);
+                viewControlAsView.DataContext = viewModel;
+              }
+            }
+          } else if(viewControlAsView != null) { // Caller has provided a view model
             viewControlAsView.DataContext = viewModel;
-          } else if(viewControlAsView.DataContext == null) {
-            viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
-            viewControlAsView.DataContext = viewModel;
-            createdViewModel = true;
           }
-        }
-      }
-      catch(Exception) {
-        if(createdViewModel) { // If we created it, we kill it.
-          disposeIfDisposable(viewModel);
-        }
-        disposeIfDisposable(viewControl);
 
-        throw;
+          // If an auto binder was provided, automatically bind the view to the view model
+          if(this.autoBinder != null) {
+            this.autoBinder.Bind(viewControl, viewModel);
+          }
+
+          viewModelDisposer.Dismiss(); // Everything went well, we keep the view model
+        }
+
+        viewDisposer.Dismiss(); // Everything went well, we keep the view
+
       }
 
       return viewControl;
@@ -215,6 +279,7 @@ namespace Nuclex.Windows.Forms {
           );
         }
 
+        // Still no view found? We give up!
         if(viewType == null) {
           throw new InvalidOperationException(
             string.Format("Could not locate view for view model '{0}'", viewModelType.Name)
@@ -346,6 +411,8 @@ namespace Nuclex.Windows.Forms {
     private EventHandler rootWindowActivatedDelegate;
     /// <summary>Invoked when a root window has been closed</summary>
     private EventHandler rootWindowClosedDelegate;
+    /// <summary>View model binder that will be used on all created views</summary>
+    private IAutoBinder autoBinder;
     /// <summary>Caches the view types to use for a view model</summary>
     private ConcurrentDictionary<Type, Type> viewTypesForViewModels;
 
