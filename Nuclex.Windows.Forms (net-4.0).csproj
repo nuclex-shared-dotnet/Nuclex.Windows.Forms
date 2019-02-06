@@ -55,6 +55,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\ViewModels\DialogViewModel.cs" />
+    <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
+      <DependentUpon>DialogViewModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\ViewModels\ThreadedDialogViewModel.cs" />
+    <Compile Include="Source\ViewModels\ThreadedDialogViewModel.Test.cs">
+      <DependentUpon>ThreadedDialogViewModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Source\ViewModels\ThreadedViewModel.cs" />
     <Compile Include="Source\ViewModels\ThreadedViewModel.Test.cs">
       <DependentUpon>ThreadedViewModel.cs</DependentUpon>
