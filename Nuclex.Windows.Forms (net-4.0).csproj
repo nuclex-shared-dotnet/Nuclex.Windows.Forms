@@ -67,13 +67,16 @@
     <Compile Include="Source\ViewModels\ThreadedViewModel.Test.cs">
       <DependentUpon>ThreadedViewModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\IActiveWindowTracker.cs" />
     <Compile Include="Source\Views\IView.cs" />
+    <Compile Include="Source\IWindowManager.cs" />
     <Compile Include="Source\Views\ViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Source\Views\ViewForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Source\WindowManager.cs" />
     <EmbeddedResource Include="Source\ProgressReporter\ProgressReporterForm.resx">
       <DependentUpon>ProgressReporterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
