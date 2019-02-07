@@ -57,6 +57,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\AutoBinding\ConventionBinder.cs" />
     <Compile Include="Source\AutoBinding\IAutoBinder.cs" />
+    <Compile Include="Source\Messages\IMessageService.cs" />
+    <Compile Include="Source\Messages\MessageEventArgs.cs" />
+    <Compile Include="Source\Messages\MessageEventArgs.Test.cs">
+      <DependentUpon>MessageEventArgs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Messages\MessageServiceHelper.cs" />
+    <Compile Include="Source\Messages\MessageText.cs" />
+    <Compile Include="Source\Messages\MessageText.Test.cs">
+      <DependentUpon>MessageText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Messages\StandardMessageBoxManager.cs" />
     <Compile Include="Source\NullActiveWindowTracker.cs" />
     <Compile Include="Source\ViewModels\DialogViewModel.cs" />
     <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
