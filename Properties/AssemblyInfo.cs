@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Nuclex.Windows.Forms")]
 [assembly: AssemblyProduct("Nuclex.Windows.Forms")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Lean and elegant MVVM library with extras for WinForms")]
 [assembly: AssemblyCompany("Nuclex Development Labs")]
-[assembly: AssemblyCopyright("Copyright © Nuclex Development Labs 2007")]
+[assembly: AssemblyCopyright("Copyright © Nuclex Development Labs 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

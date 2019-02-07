@@ -23,13 +23,14 @@ License along with this library
 using System;
 using System.ComponentModel;
 using System.Threading;
+
 using NUnit.Framework;
 
 namespace Nuclex.Windows.Forms.ViewModels {
 
-  /// <summary>Unit test for the threaded view model base class</summary>
+  /// <summary>Unit test for the threaded action class</summary>
   [TestFixture]
-  public class ThreadedViewModelTest {
+  public class ThreadedActionTest {
 
     #region class DummyContext
 
@@ -111,23 +112,22 @@ namespace Nuclex.Windows.Forms.ViewModels {
 
     #endregion // class DummyContext
 
-    #region class TestViewModel
+    #region class DummyThreadedAction
 
-    /// <summary>View model used to unit test the threaded view model base class</summary>
-    private class TestViewModel : ThreadedViewModel {
+    /// <summary>Implementation of a threaded action for the unit test</summary>
+    private class DummyThreadedAction : ThreadedAction {
 
       /// <summary>
-      ///   Initializes a new view model, letting the base class figure out the UI thread
+      ///   Initializes a new threaded action, letting the base class figure out the UI thread
       /// </summary>
-      public TestViewModel() : base() {
+      public DummyThreadedAction() : base() {
         this.finishedGate = new ManualResetEvent(initialState: false);
       }
 
       /// <summary>
-      ///   Initializes a new view model, using the specified context for the UI thread
+      ///   Initializes a new view model using the specified UI context explicitly
       /// </summary>
-      /// <param name="uiContext">Synchronization context of the UI thread</param>
-      public TestViewModel(ISynchronizeInvoke uiContext) : base(uiContext) {
+      public DummyThreadedAction(ISynchronizeInvoke uiContext) : base(uiContext) {
         this.finishedGate = new ManualResetEvent(initialState: false);
       }
 
@@ -149,23 +149,16 @@ namespace Nuclex.Windows.Forms.ViewModels {
         return this.finishedGate.WaitOne(100);
       }
 
-      /// <summary>Runs a background process that causes the specified error</summary>
-      /// <param name="error">Error that will be caused in the background process</param>
-      public void CauseErrorInBackgroundThread(Exception error) {
-        RunInBackground(() => throw error);
+      /// <summary>Selects the value that will be assigned when the action runs</summary>
+      /// <param name="valueToAssign">Value the action will assigned when it runs</param>
+      public void SetValueToAssign(int valueToAssign) {
+        this.valueToAssign = valueToAssign;
       }
 
-      /// <summary>
-      ///   Assigns the specified value to the same-named property from a background thread
-      /// </summary>
-      /// <param name="value">Value that will be assigned to the same-named property</param>
-      public void AssignValueInBackgroundThread(int value) {
-        RunInBackground(
-          delegate () {
-            this.assignedValue = value;
-            this.finishedGate.Set();
-          }
-        );
+      /// <summary>Sets up an error the action will fail with when run</summary>
+      /// <param name="errorToFailWith">Error the action will fail with</param>
+      public void SetErrorToFailWith(Exception errorToFailWith) {
+        this.errorToFailWith = errorToFailWith;
       }
 
       /// <summary>Last error that was reported by the threaded view model</summary>
@@ -178,12 +171,28 @@ namespace Nuclex.Windows.Forms.ViewModels {
         get { return this.assignedValue; }
       }
 
+      /// <summary>Executes the threaded action from the background thread</summary>
+      /// <param name="cancellationToken">Token by which execution can be canceled</param>
+      protected override void Run(CancellationToken cancellationToken) {
+        if(this.errorToFailWith != null) {
+          throw this.errorToFailWith;
+        }
+
+        this.assignedValue = this.valueToAssign;
+        this.finishedGate.Set();
+      }
+
       /// <summary>Called when an error occurs in the background thread</summary>
       /// <param name="exception">Exception that was thrown in the background thread</param>
       protected override void ReportError(Exception exception) {
         this.reportedError = exception;
         this.finishedGate.Set();
       }
+
+      /// <summary>Error the action will fail with, if set</summary>
+      private Exception errorToFailWith;
+      /// <summary>Value the action will assign to its same-named field</summary>
+      private int valueToAssign;
 
       /// <summary>Last error that was reported by the threaded view model</summary>
       private volatile Exception reportedError;
@@ -194,16 +203,16 @@ namespace Nuclex.Windows.Forms.ViewModels {
 
     }
 
-    #endregion // class TestViewModel
+    #endregion // class DummyThreadedAction
 
-    /// <summary>Verifies that the threaded view model has a default constructor</summary>
+    /// <summary>Verifies that the threaded action has a default constructor</summary>
     [Test, Explicit]
     public void HasDefaultConstructor() {
       using(var mainForm = new System.Windows.Forms.Form()) {
         mainForm.Show();
         try {
           mainForm.Visible = false;
-          using(new TestViewModel()) { }
+          using(new DummyThreadedAction()) { }
         }
         finally {
           mainForm.Close();
@@ -212,18 +221,18 @@ namespace Nuclex.Windows.Forms.ViewModels {
     }
 
     /// <summary>
-    ///   Verifies that the threaded view model can be constructed with a custom UI context
+    ///   Verifies that the threaded action can be constructed with a custom UI context
     /// </summary>
     [Test]
     public void HasCustomSychronizationContextConstructor() {
-      using(new TestViewModel(new DummyContext())) { }
+      using(new DummyThreadedAction(new DummyContext())) { }
     }
 
-    /// <summary>Checks that a new view model starts out idle and not busy</summary>
+    /// <summary>Checks that a new threadd action starts out idle and not busy</summary>
     [Test]
     public void NewInstanceIsNotBusy() {
-      using(var viewModel = new TestViewModel(new DummyContext())) {
-        Assert.IsFalse(viewModel.IsBusy);
+      using(var action = new DummyThreadedAction(new DummyContext())) {
+        Assert.IsFalse(action.IsBusy);
       }
     }
 
@@ -233,11 +242,12 @@ namespace Nuclex.Windows.Forms.ViewModels {
     /// </summary>
     [Test]
     public void ErrorsInBackgroundThreadAreReported() {
-      using(var viewModel = new TestViewModel(new DummyContext())) {
+      using(var action = new DummyThreadedAction(new DummyContext())) {
         var testError = new ArgumentException("Mooh");
-        viewModel.CauseErrorInBackgroundThread(testError);
-        viewModel.WaitUntilFinished();
-        Assert.AreSame(testError, viewModel.ReportedError);
+        action.SetErrorToFailWith(testError);
+        action.Start();
+        action.WaitUntilFinished();
+        Assert.AreSame(testError, action.ReportedError);
       }
     }
 
@@ -246,10 +256,11 @@ namespace Nuclex.Windows.Forms.ViewModels {
     /// </summary>
     [Test]
     public void BackgroundThreadExecutesTasks() {
-      using(var viewModel = new TestViewModel(new DummyContext())) {
-        viewModel.AssignValueInBackgroundThread(10042);
-        viewModel.WaitUntilFinished();
-        Assert.AreEqual(10042, viewModel.AssignedValue);
+      using(var action = new DummyThreadedAction(new DummyContext())) {
+        action.SetValueToAssign(42001);
+        action.Start();
+        action.WaitUntilFinished();
+        Assert.AreEqual(42001, action.AssignedValue);
       }
     }
 

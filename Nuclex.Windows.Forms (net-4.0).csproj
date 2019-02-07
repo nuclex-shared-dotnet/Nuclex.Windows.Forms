@@ -57,9 +57,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\AutoBinding\ConventionBinder.cs" />
     <Compile Include="Source\AutoBinding\IAutoBinder.cs" />
+    <Compile Include="Source\NullActiveWindowTracker.cs" />
     <Compile Include="Source\ViewModels\DialogViewModel.cs" />
     <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
       <DependentUpon>DialogViewModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\ViewModels\ThreadedAction.cs" />
+    <Compile Include="Source\ViewModels\ThreadedAction.Test.cs">
+      <DependentUpon>ThreadedAction.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\ViewModels\ThreadedDialogViewModel.cs" />
     <Compile Include="Source\ViewModels\ThreadedDialogViewModel.Test.cs">
@@ -79,6 +84,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Source\WindowManager.cs" />
+    <Compile Include="Source\WindowManager.Test.cs">
+      <DependentUpon>WindowManager.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Source\ProgressReporter\ProgressReporterForm.resx">
       <DependentUpon>ProgressReporterForm.cs</DependentUpon>
       <SubType>Designer</SubType>

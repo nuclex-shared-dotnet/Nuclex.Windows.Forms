@@ -196,6 +196,12 @@ namespace Nuclex.Windows.Forms.ViewModels {
       OnPropertyChanged(nameof(IsBusy));
     }
 
+    // For the ThreadedAction class - there should be a better way!
+    /// <summary>Thread runner that manages the view model's thread</summary>
+    internal ThreadRunner ThreadRunner {
+      get { return this.threadRunner; }
+    }
+
     /// <summary>Reports an error that occurred in the runner's background thread</summary>
     /// <param name="exception">Exception that the thread has encountered</param>
     private void reportErrorFromThread(Exception exception) {

@@ -36,11 +36,11 @@ namespace Nuclex.Windows.Forms.Views {
       this.onViewModelPropertyChangedDelegate = OnViewModelPropertyChanged;
     }
 
-		/// <summary>Called when the window's data context is changed</summary>
-		/// <param name="sender">Window whose data context was changed</param>
-		/// <param name="oldDataContext">Data context that was previously used</param>
-		/// <param name="newDataContext">Data context that will be used from now on</param>
-		protected virtual void OnDataContextChanged(
+    /// <summary>Called when the window's data context is changed</summary>
+    /// <param name="sender">Window whose data context was changed</param>
+    /// <param name="oldDataContext">Data context that was previously used</param>
+    /// <param name="newDataContext">Data context that will be used from now on</param>
+    protected virtual void OnDataContextChanged(
       object sender, object oldDataContext, object newDataContext
     ) {
       var oldViewModel = oldDataContext as INotifyPropertyChanged;
