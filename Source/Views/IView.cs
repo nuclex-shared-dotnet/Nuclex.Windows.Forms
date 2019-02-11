@@ -32,6 +32,10 @@ namespace Nuclex.Windows.Forms.Views {
     /// </remarks>
     object DataContext { get; set; }
 
+    // Whether the view owns its view model and it needs to be disposed after
+    // the view ceases to exist
+    //bool IsOwnedByView { get; set; }
+
   }
 
 } // namespace Nuclex.Windows.Forms.Views

@@ -260,6 +260,7 @@ namespace Nuclex.Windows.Forms {
         viewType = findBestMatch(
           namespaceTypes,
           viewName + "View",
+          viewName + "Page",
           viewName + "Form",
           viewName + "Window",
           viewName + "Dialog",
@@ -272,6 +273,7 @@ namespace Nuclex.Windows.Forms {
           viewType = findBestMatch(
             exportedTypes,
             viewName + "View",
+            viewName + "Page",
             viewName + "Form",
             viewName + "Window",
             viewName + "Dialog",

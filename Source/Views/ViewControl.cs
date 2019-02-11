@@ -72,7 +72,9 @@ namespace Nuclex.Windows.Forms.Views {
       get { return this.dataContext; }
       set {
         if(value != this.dataContext) {
+          object oldDataContext = this.dataContext;
           this.dataContext = value;
+          OnDataContextChanged(this, oldDataContext, value);
         }
       }
     }

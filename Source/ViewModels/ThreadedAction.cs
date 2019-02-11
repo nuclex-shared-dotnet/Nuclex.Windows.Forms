@@ -93,7 +93,10 @@ namespace Nuclex.Windows.Forms.ViewModels {
     /// <summary>Initializes a threaded action that uses its own thread runner</summary>
     public ThreadedAction(ISynchronizeInvoke uiContext = null) : this() {
       if(uiContext == null) {
-        this.uiContext = getMainWindow();
+        this.uiContext = LateCheckedSynchronizer.GetMainWindow();
+        if(this.uiContext == null) {
+          this.uiContext = new LateCheckedSynchronizer(updateUiContext);
+        }
       } else {
         this.uiContext = uiContext;
       }
@@ -112,7 +115,10 @@ namespace Nuclex.Windows.Forms.ViewModels {
       ThreadedViewModel viewModel, ISynchronizeInvoke uiContext = null
     ) : this() {
       if(uiContext == null) {
-        this.uiContext = getMainWindow();
+        this.uiContext = LateCheckedSynchronizer.GetMainWindow();
+        if(this.uiContext == null) {
+          this.uiContext = new LateCheckedSynchronizer(updateUiContext);
+        }
       } else {
         this.uiContext = uiContext;
       }
@@ -350,30 +356,10 @@ namespace Nuclex.Windows.Forms.ViewModels {
       this.uiContext.Invoke(this.reportErrorDelegate, new object[1] { exception });
     }
 
-    /// <summary>Finds the application's main window</summary>
-    /// <returns>Main window of the application</returns>
-    private static Form getMainWindow() {
-      IntPtr mainWindowHandle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
-
-      // We can get two things: a list of all open windows and the handle of
-      // the window that the process has registered as main window. Use the latter
-      // to pick the correct window from the former.
-      FormCollection openForms = Application.OpenForms;
-      int openFormCount = openForms.Count;
-      for(int index = 0; index < openFormCount; ++index) {
-        if(openForms[index].IsHandleCreated) {
-          if(openForms[index].Handle == mainWindowHandle) {
-            return openForms[index];
-          }
-        }
-      }
-
-      // No matching main window found: use the first one in good faith or fail.
-      if(openFormCount > 0) {
-        return openForms[0];
-      } else {
-        return null;
-      }
+    /// <summary>Sets the UI context that will be used by the threaded action</summary>
+    /// <param name="uiContext">The UI context the threaded action will use</param>
+    private void updateUiContext(ISynchronizeInvoke uiContext) {
+      this.uiContext = uiContext;
     }
 
     /// <summary>Synchronization context of the thread in which the view runs</summary>
