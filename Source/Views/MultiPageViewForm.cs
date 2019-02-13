@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using Nuclex.Support;
@@ -12,6 +13,51 @@ namespace Nuclex.Windows.Forms.Views {
 
   /// <summary>Special view form that can display different child views</summary>
   public class MultiPageViewForm : ViewForm {
+
+    #region struct RedrawLockScope
+
+    /// <summary>Prevents controls from redrawing themselves for a while</summary>
+    private struct RedrawLockScope : IDisposable {
+
+      /// <summary>Window message that enables or disables control redraw</summary>
+      private const int WM_SETREDRAW = 11;
+
+      /// <summary>Sends a window message to the specified window</summary>
+      /// <param name="windowHandle">Window a message will be sent to</param>
+      /// <param name="messageId">ID of the message that will be sent</param>
+      /// <param name="firstArgument">First argument to the window procedure</param>
+      /// <param name="secondArgument">Second argument to the window procedure</param>
+      /// <returns>The return value of the window procedure</returns>
+      [DllImport("user32")]
+      public static extern int SendMessage(
+        IntPtr windowHandle, int messageId, bool firstArgument, int secondArgument
+      );
+
+      /// <summary>Stops redrawing the specified control</summary>
+      /// <param name="control">Control to stop redrawing</param>
+      public RedrawLockScope(Control control) {
+        if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
+          SendMessage(control.Handle, WM_SETREDRAW, false, 0);
+          this.control = control;
+        } else {
+          this.control = null;
+        }
+      }
+
+      /// <summary>Enables redrawing again when the lock scope is disposed</summary>
+      public void Dispose() {
+        if(this.control != null) {
+          SendMessage(this.control.Handle, WM_SETREDRAW, true, 0);
+          this.control.Invalidate(true);
+        }
+      }
+
+      /// <summary>Control that has been stopped from redrawing itself</summary>
+      private Control control;
+
+    }
+
+    #endregion // struct RedrawLockScope
 
     /// <summary>Initializes a new multi page view window</summary>
     /// <param name="windowManager">
@@ -191,13 +237,18 @@ namespace Nuclex.Windows.Forms.Views {
       // Worst, but usual, case: the new page view model might require
       // a different view. Create or look up the new view and put it in the container
       {
-        disableActivePageView();
+        if(pageViewModel == null) {
+          disableActivePageView();
+        } else {
+          Control pageViewContainer = getPageViewContainer();
+          using(new RedrawLockScope(pageViewContainer)) { 
+            disableActivePageView();
 
-        this.activePageView = getOrCreatePageView(pageViewModel);
-
-        Control pageViewContainer = getPageViewContainer();
-        pageViewContainer.Controls.Add(this.activePageView);
-        this.activePageView.Dock = DockStyle.Fill;
+            this.activePageView = getOrCreatePageView(pageViewModel);
+            pageViewContainer.Controls.Add(this.activePageView);
+            this.activePageView.Dock = DockStyle.Fill;
+          }
+        }
       }
     }
 
