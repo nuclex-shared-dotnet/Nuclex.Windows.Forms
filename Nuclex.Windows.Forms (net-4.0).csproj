@@ -59,6 +59,12 @@
     <Compile Include="Source\AutoBinding\IAutoBinder.cs" />
     <Compile Include="Source\CommonDialogs\CommonDialogManager.cs" />
     <Compile Include="Source\CommonDialogs\ICommonDialogService.cs" />
+    <Compile Include="Source\Controls\ProgressSpinner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Source\Controls\ProgressSpinner.Designer.cs">
+      <DependentUpon>ProgressSpinner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Source\LateCheckedSynchronizer.cs" />
     <Compile Include="Source\Messages\IMessageService.cs" />
     <Compile Include="Source\Messages\MessageEventArgs.cs" />
@@ -102,6 +108,9 @@
     <Compile Include="Source\WindowManager.Test.cs">
       <DependentUpon>WindowManager.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Source\Controls\ProgressSpinner.resx">
+      <DependentUpon>ProgressSpinner.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Source\ProgressReporter\ProgressReporterForm.resx">
       <DependentUpon>ProgressReporterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -143,7 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nuclex.Support.Transactions\Nuclex.Support.Transactions %28net-4.0%29.csproj">
-      <Project>{2F487C4D-8E06-496F-BCD5-7119B18C78D8}</Project>
+      <Project>{2f487c4d-8e06-496f-bcd5-7119b18c78d8}</Project>
       <Name>Nuclex.Support.Transactions %28net-4.0%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\Nuclex.Support\Nuclex.Support %28net-4.0%29.csproj">
@@ -158,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="Source\Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
