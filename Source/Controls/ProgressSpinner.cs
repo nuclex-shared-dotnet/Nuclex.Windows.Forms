@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -104,6 +105,26 @@ namespace Nuclex.Windows.Forms.Controls {
     /// <summary>Called when the control should redraw itself</summary>
     /// <param name="arguments">Provides access to the drawing surface and tools</param>
     protected override void OnPaint(PaintEventArgs arguments) {
+      paintControlsBehindMe(arguments);
+      paintAnimatedDots(arguments);
+    }
+
+    /// <summary>Forcefully redraws the controls below this one</summary>
+    /// <param name="arguments">Provides access to the drawing surface and tools</param>
+    /// <remarks>
+    ///   <para>
+    ///     WinForms has very poor transparency support. A transparent control will only
+    ///     be transparent to its immediate parent (so the parent needs to be a container
+    ///     control and hold the transparent control as its preferrably only child).
+    ///   </para>
+    ///   <para>
+    ///     Worse yet, if you manually establish this relationship in your .Designer.cs
+    ///     file, the Visual Studio WinForms designer will dismantle it next time you
+    ///     edit something. This method fixes those issues by repainting all controls
+    ///     that are behind this control and whose bounding box intersect this control.
+    ///   </para>
+    /// </remarks>
+    private void paintControlsBehindMe(PaintEventArgs arguments) {
       if(Parent != null && this.BackColor == Color.Transparent) {
         using(var bmp = new Bitmap(Parent.Width, Parent.Height)) {
           Parent.Controls.Cast<Control>()
@@ -116,7 +137,11 @@ namespace Nuclex.Windows.Forms.Controls {
           arguments.Graphics.DrawImage(bmp, -Left, -Top);
         }
       }
+    }
 
+    /// <summary>Draws a simple animated dots animation</summary>
+    /// <param name="arguments">Provides access to the drawing surface and tools</param>
+    private void paintAnimatedDots(PaintEventArgs arguments) {
       if(this.dotOutlinePen == null) {
         this.dotOutlinePen = new Pen(this.dotOutlineColor);
       }
@@ -124,30 +149,40 @@ namespace Nuclex.Windows.Forms.Controls {
         this.dotFillBrush = new SolidBrush(this.dotFillColor);
       }
 
-      //e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+      SmoothingMode prevousSmoothingMode = arguments.Graphics.SmoothingMode;
+      arguments.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+      try {
+        int diameter = Math.Min(Width, Height);
+        PointF center = new PointF(diameter / 2.0f, diameter / 2.0f);
 
-      int diameter = Math.Min(Width, Height);
-      PointF center = new PointF(diameter / 2.0f, diameter / 2.0f);
+        int bigRadius = diameter / 2 - DotRadius - (DotCount - 1) * ScaleFactor;
 
-      int bigRadius = diameter / 2 - DotRadius - (DotCount - 1) * ScaleFactor;
+        // Draw the dots
+        float unitAngle = 360.0f / DotCount;
+        for(int index = 0; index < DotCount; ++index) {
+          int dotIndex = (index + leadingDotIndex) % DotCount;
 
-      float unitAngle = 360 / DotCount;
+          var dotPosition = new PointF(
+            center.X + (float)(bigRadius * Math.Cos(unitAngle * dotIndex * Math.PI / 180.0f)),
+            center.Y + (float)(bigRadius * Math.Sin(unitAngle * dotIndex * Math.PI / 180.0f))
+          );
 
-      for(int index = 0; index < DotCount; ++index) {
-        int dotIndex = (index + leadingDotIndex) % DotCount;
+          int currentDotRadius = DotRadius + index * ScaleFactor;
 
-        var dotPosition = new PointF(
-          center.X + (float)(bigRadius * Math.Cos(unitAngle * dotIndex * Math.PI / 180)),
-          center.Y + (float)(bigRadius * Math.Sin(unitAngle * dotIndex * Math.PI / 180))
-        );
-
-        int currentDotRadius = DotRadius + index * ScaleFactor;
-
-        PointF c1 = new PointF(dotPosition.X - currentDotRadius, dotPosition.Y - currentDotRadius);
-        arguments.Graphics.FillEllipse(this.dotFillBrush, c1.X, c1.Y, 2 * currentDotRadius, 2 * currentDotRadius);
-        arguments.Graphics.DrawEllipse(this.dotOutlinePen, c1.X, c1.Y, 2 * currentDotRadius, 2 * currentDotRadius);
+          var corner = new PointF(
+            dotPosition.X - currentDotRadius, dotPosition.Y - currentDotRadius
+          );
+          arguments.Graphics.FillEllipse(
+            this.dotFillBrush, corner.X, corner.Y, 2 * currentDotRadius, 2 * currentDotRadius
+          );
+          arguments.Graphics.DrawEllipse(
+            this.dotOutlinePen, corner.X, corner.Y, 2 * currentDotRadius, 2 * currentDotRadius
+          );
+        }
       }
-
+      finally {
+        arguments.Graphics.SmoothingMode = prevousSmoothingMode;
+      }
     }
 
     /// <summary>Called when the animation timer ticks to update the animation state</summary>
