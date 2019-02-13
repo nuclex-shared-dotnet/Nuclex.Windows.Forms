@@ -76,6 +76,7 @@
     <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
       <DependentUpon>DialogViewModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\ViewModels\MultiPageViewModel.cs" />
     <Compile Include="Source\ViewModels\ThreadedAction.cs" />
     <Compile Include="Source\ViewModels\ThreadedAction.Test.cs">
       <DependentUpon>ThreadedAction.cs</DependentUpon>
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Source\Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

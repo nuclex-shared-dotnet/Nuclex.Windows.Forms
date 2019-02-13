@@ -239,6 +239,25 @@ namespace Nuclex.Windows.Forms {
       return viewControl;
     }
 
+    /// <summary>Creates a view model without a matching view</summary>
+    /// <typeparam name="TViewModel">Type of view model that will be created</typeparam>
+    /// <returns>The new view model</returns>
+    /// <remarks>
+    ///   <para>
+    ///     This is useful if a view model needs to create child view models (i.e. paged container
+    ///     and wants to ensure the same dependency injector (if any) if used as the window
+    ///     manager uses for other view models it creates.
+    ///   </para>
+    ///   <para>
+    ///     This way, view models can set up their child view models without having to immediately
+    ///     bind a view to them. Later on, views can use the window manager to create a matching
+    ///     child view and store it in a container.
+    ///   </para>
+    /// </remarks>
+    public TViewModel CreateViewModel<TViewModel>() where TViewModel : class {
+      return (TViewModel)CreateInstance(typeof(TViewModel));
+    }
+
     /// <summary>Locates the view that will be used to a view model</summary>
     /// <param name="viewModelType">
     ///   Type of view model for which the view will be located
