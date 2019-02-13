@@ -82,6 +82,7 @@
     <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
       <DependentUpon>DialogViewModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\ViewModels\IMultiPageViewModel.cs" />
     <Compile Include="Source\ViewModels\MultiPageViewModel.cs" />
     <Compile Include="Source\ViewModels\ThreadedAction.cs" />
     <Compile Include="Source\ViewModels\ThreadedAction.Test.cs">
@@ -98,6 +99,9 @@
     <Compile Include="Source\IActiveWindowTracker.cs" />
     <Compile Include="Source\Views\IView.cs" />
     <Compile Include="Source\IWindowManager.cs" />
+    <Compile Include="Source\Views\MultiPageViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Source\Views\ViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

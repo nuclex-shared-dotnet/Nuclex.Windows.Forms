@@ -94,6 +94,29 @@ namespace Nuclex.Windows.Forms.Controls {
       }
     }
 
+    /// <summary>Calculates the optimal size for the spinner control</summary>
+    /// <returns>The optimal size for the spinner control to have</returns>
+    /// <remarks>
+    ///   Thanks to WinForms limited control transparency, the progress spinner needs to
+    ///   redraw every control behind it each time it updates. Thus it's wise to keep it
+    ///   as small as possible, but wide enough to fit the status text, if any.
+    /// </remarks>
+    public Size GetOptimalSize() {
+      SizeF textRectangle;
+      using(var dummyImage = new Bitmap(1, 1)) {
+        using(Graphics graphics = Graphics.FromImage(dummyImage)) {
+          textRectangle = graphics.MeasureString(
+            this.statusText, this.statusFont
+          );
+        }
+      }
+
+      return new Size(
+        Math.Max(128, (int)(textRectangle.Width + 2.0f)),
+        this.statusFont.Height + 128
+      );
+    }
+
     /// <summary>Font that is used to display the status text</summary>
     public Font StatusFont {
       get { return this.statusFont; }
