@@ -94,11 +94,22 @@ namespace Nuclex.Windows.Forms.Controls {
       }
     }
 
+    /// <summary>Font that is used to display the status text</summary>
+    public Font StatusFont {
+      get { return this.statusFont; }
+      set { this.statusFont = value; }
+    }
+
+    /// <summary>Text that will be displayed as the control's status</summary>
+    public string StatusText {
+      get { return this.statusText; }
+      set { this.statusText = value; }
+    }
+
     /// <summary>Called when the control is hidden or shown</summary>
     /// <param name="arguments">Not used</param>
     protected override void OnVisibleChanged(EventArgs arguments) {
       base.OnVisibleChanged(arguments);
-
       this.animationUpdateTimer.Enabled = this.spinnerRunning && Visible;
     }
 
@@ -107,6 +118,7 @@ namespace Nuclex.Windows.Forms.Controls {
     protected override void OnPaint(PaintEventArgs arguments) {
       paintControlsBehindMe(arguments);
       paintAnimatedDots(arguments);
+      paintStatusMessage(arguments);
     }
 
     /// <summary>Forcefully redraws the controls below this one</summary>
@@ -128,11 +140,11 @@ namespace Nuclex.Windows.Forms.Controls {
       if(Parent != null && this.BackColor == Color.Transparent) {
         using(var bmp = new Bitmap(Parent.Width, Parent.Height)) {
           Parent.Controls.Cast<Control>()
-                .Where(c => Parent.Controls.GetChildIndex(c) > Parent.Controls.GetChildIndex(this))
-                .Where(c => c.Bounds.IntersectsWith(this.Bounds))
-                .OrderByDescending(c => Parent.Controls.GetChildIndex(c))
-                .ToList()
-                .ForEach(c => c.DrawToBitmap(bmp, c.Bounds));
+            .Where(c => Parent.Controls.GetChildIndex(c) > Parent.Controls.GetChildIndex(this))
+            .Where(c => c.Bounds.IntersectsWith(this.Bounds))
+            .OrderByDescending(c => Parent.Controls.GetChildIndex(c))
+            .ToList()
+            .ForEach(c => c.DrawToBitmap(bmp, c.Bounds));
 
           arguments.Graphics.DrawImage(bmp, -Left, -Top);
         }
@@ -152,9 +164,9 @@ namespace Nuclex.Windows.Forms.Controls {
       SmoothingMode prevousSmoothingMode = arguments.Graphics.SmoothingMode;
       arguments.Graphics.SmoothingMode = SmoothingMode.HighQuality;
       try {
-        int diameter = Math.Min(Width, Height);
-        PointF center = new PointF(diameter / 2.0f, diameter / 2.0f);
+        PointF center = new PointF(Width / 2.0f, (Height - this.statusFont.Height - 2) / 2.0f);
 
+        int diameter = Math.Min(Width, Height - this.statusFont.Height - 2);
         int bigRadius = diameter / 2 - DotRadius - (DotCount - 1) * ScaleFactor;
 
         // Draw the dots
@@ -185,6 +197,52 @@ namespace Nuclex.Windows.Forms.Controls {
       }
     }
 
+    /// <summary>Draws the status message under the animated dots</summary>
+    /// <param name="arguments">Provides access to the drawing surface and tools</param>
+    private void paintStatusMessage(PaintEventArgs arguments) {
+      if(!string.IsNullOrEmpty(this.statusText)) {
+        SizeF textRectangle = arguments.Graphics.MeasureString(
+          this.statusText, this.statusFont
+        );
+
+        var messageArea = new RectangleF(
+          (Width - textRectangle.Width) / 2.0f,
+          Height - this.statusFont.Height - 1.0f,
+          textRectangle.Width,
+          this.statusFont.Height
+        );
+
+        // Draw text with a white halo. This is a little bit ugly...
+        {
+          messageArea.Offset(-1.0f, 0.0f);
+          arguments.Graphics.DrawString(
+            this.statusText, this.statusFont, Brushes.White, messageArea
+          );
+
+          messageArea.Offset(2.0f, 0.0f);
+          arguments.Graphics.DrawString(
+            this.statusText, this.statusFont, Brushes.White, messageArea
+          );
+
+          messageArea.Offset(-1.0f, -1.0f);
+          arguments.Graphics.DrawString(
+            this.statusText, this.statusFont, Brushes.White, messageArea
+          );
+
+          messageArea.Offset(0.0f, 2.0f);
+          arguments.Graphics.DrawString(
+            this.statusText, this.statusFont, Brushes.White, messageArea
+          );
+
+          messageArea.Offset(0.0f, -1.0f);
+          arguments.Graphics.DrawString(
+            this.statusText, this.statusFont, this.dotFillBrush, messageArea
+          );
+        }
+      }
+    }
+
+
     /// <summary>Called when the animation timer ticks to update the animation state</summary>
     /// <param name="sender">Animation timer that has ticked</param>
     /// <param name="arguments">Not used</param>
@@ -195,6 +253,11 @@ namespace Nuclex.Windows.Forms.Controls {
 
     /// <summary>Whether the spinner has been started</summary>
     private bool spinnerRunning;
+    /// <summary>Index of the currently leading dot</summary>
+    private int leadingDotIndex = 0;
+    /// <summary>Text that will be displayed under the control as the current status</summary>
+    private string statusText;
+
     /// <summary>Color in which the dots will be filled</summary>
     private Color dotFillColor = Color.RoyalBlue;
     /// <summary>Color that will be used for the dots' outline</summary>
@@ -203,8 +266,8 @@ namespace Nuclex.Windows.Forms.Controls {
     private Brush dotFillBrush;
     /// <summary>Brush used for the dots' outline</summary>
     private Pen dotOutlinePen;
-    /// <summary>Index of the currently leading dot</summary>
-    private int leadingDotIndex = 0;
+    /// <summary>Font that is used to display the status text</summary>
+    private Font statusFont = SystemFonts.SmallCaptionFont;
 
   }
 
