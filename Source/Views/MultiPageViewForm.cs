@@ -66,7 +66,7 @@ namespace Nuclex.Windows.Forms.Views {
     /// <param name="cachePageViews">Whether page views should be kept alive and reused</param>
     public MultiPageViewForm(IWindowManager windowManager, bool cachePageViews = false) {
       this.windowManager = windowManager;
-      this.createViewMethod = typeof(IWindowManager).GetMethod("CreateView");
+      this.createViewMethod = typeof(IWindowManager).GetMethod(nameof(IWindowManager.CreateView));
 
       if(cachePageViews) {
         this.cachedViews = new Dictionary<Type, Control>();
@@ -191,11 +191,27 @@ namespace Nuclex.Windows.Forms.Views {
     ) {
       base.OnViewModelPropertyChanged(sender, arguments);
 
-      MultiPageViewModel<bool> anyMultiPageViewModel;
-      if(arguments.AreAffecting(nameof(anyMultiPageViewModel.ActivePage))) {
+      if(arguments.AreAffecting(nameof(MultiPageViewModel<object>.ActivePage))) {
         var viewModelAsMultiPageviewModel = DataContext as IMultiPageViewModel;
         if(viewModelAsMultiPageviewModel != null) {
           activatePageView(viewModelAsMultiPageviewModel.GetActivePageViewModel());
+        }
+      }
+    }
+
+    /// <summary>Currently active page view control</summary>
+    protected Control ActivePageView {
+      get { return this.activePageView; }
+    }
+
+    /// <summary>The view model running the currently active page</summary>
+    protected object ActivePageViewModel {
+      get {
+        var activePageViewAsView = this.activePageView as IView;
+        if(activePageViewAsView == null) {
+          return null;
+        } else { 
+          return activePageViewAsView.DataContext;
         }
       }
     }
