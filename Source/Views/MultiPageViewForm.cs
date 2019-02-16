@@ -130,7 +130,7 @@ namespace Nuclex.Windows.Forms.Views {
         Control control = Controls[index];
 
         // Only check container controls
-        if((control is ContainerControl) || (control is Panel)) { 
+        if((control is ContainerControl) || (control is Panel)) {
           if(firstContainer == null) {
             firstContainer = control;
           }
@@ -194,7 +194,14 @@ namespace Nuclex.Windows.Forms.Views {
       if(arguments.AreAffecting(nameof(MultiPageViewModel<object>.ActivePage))) {
         var viewModelAsMultiPageviewModel = DataContext as IMultiPageViewModel;
         if(viewModelAsMultiPageviewModel != null) {
-          activatePageView(viewModelAsMultiPageviewModel.GetActivePageViewModel());
+          if(InvokeRequired) {
+            Invoke(
+              new Action<object>(activatePageView),
+              viewModelAsMultiPageviewModel.GetActivePageViewModel()
+            );
+          } else {
+            activatePageView(viewModelAsMultiPageviewModel.GetActivePageViewModel());
+          }
         }
       }
     }
@@ -210,7 +217,7 @@ namespace Nuclex.Windows.Forms.Views {
         var activePageViewAsView = this.activePageView as IView;
         if(activePageViewAsView == null) {
           return null;
-        } else { 
+        } else {
           return activePageViewAsView.DataContext;
         }
       }
@@ -257,7 +264,7 @@ namespace Nuclex.Windows.Forms.Views {
           disableActivePageView();
         } else {
           Control pageViewContainer = getPageViewContainer();
-          using(new RedrawLockScope(pageViewContainer)) { 
+          using(new RedrawLockScope(pageViewContainer)) {
             disableActivePageView();
 
             this.activePageView = getOrCreatePageView(pageViewModel);

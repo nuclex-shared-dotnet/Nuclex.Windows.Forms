@@ -152,7 +152,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
       /// <summary>Runs a background process that causes the specified error</summary>
       /// <param name="error">Error that will be caused in the background process</param>
       public void CauseErrorInBackgroundThread(Exception error) {
-        RunInBackground(() => throw error);
+        RunInBackground(
+          delegate() { throw error; }
+        );
       }
 
       /// <summary>
