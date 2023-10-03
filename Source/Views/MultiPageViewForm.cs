@@ -59,6 +59,11 @@ namespace Nuclex.Windows.Forms.Views {
 
     #endregion // struct RedrawLockScope
 
+    /// <summary>Initializes a new multi page view window for the windows forms designer</summary>
+    public MultiPageViewForm() {
+      this.createViewMethod = typeof(IWindowManager).GetMethod(nameof(IWindowManager.CreateView));
+    }
+
     /// <summary>Initializes a new multi page view window</summary>
     /// <param name="windowManager">
     ///   Window manager that is used to set up the child views

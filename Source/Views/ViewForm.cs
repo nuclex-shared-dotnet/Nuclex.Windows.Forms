@@ -36,6 +36,18 @@ namespace Nuclex.Windows.Forms.Views {
       this.onViewModelPropertyChangedDelegate = OnViewModelPropertyChanged;
     }
 
+    /// <summary>Provides the data binding target for the view</summary>
+    public object DataContext {
+      get { return this.dataContext; }
+      set {
+        if(value != this.dataContext) {
+          object oldDataContext = this.dataContext;
+          this.dataContext = value;
+          OnDataContextChanged(this, oldDataContext, value);
+        }
+      }
+    }
+
     /// <summary>Called when the window's data context is changed</summary>
     /// <param name="sender">Window whose data context was changed</param>
     /// <param name="oldDataContext">Data context that was previously used</param>
@@ -66,18 +78,6 @@ namespace Nuclex.Windows.Forms.Views {
     protected virtual void OnViewModelPropertyChanged(
       object sender, PropertyChangedEventArgs arguments
     ) { }
-
-    /// <summary>Provides the data binding target for the view</summary>
-    public object DataContext {
-      get { return this.dataContext; }
-      set {
-        if(value != this.dataContext) {
-          object oldDataContext = this.dataContext;
-          this.dataContext = value;
-          OnDataContextChanged(this, oldDataContext, value);
-        }
-      }
-    }
 
     /// <summary>Active data binding target, can be null</summary>
     private object dataContext;
