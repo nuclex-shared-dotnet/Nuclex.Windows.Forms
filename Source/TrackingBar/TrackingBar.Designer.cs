@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion // Apache License 2.0
 
+#if WITH_NUCLEX_SUPPORT_TRANSACTIONS
+
 namespace Nuclex.Windows.Forms {
 
   partial class TrackingBar {
@@ -48,3 +50,5 @@ namespace Nuclex.Windows.Forms {
   }
 
 } // namespace Nuclex.Windows.Forms
+
+#endif // WITH_NUCLEX_SUPPORT_TRANSACTIONS

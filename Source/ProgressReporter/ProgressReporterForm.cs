@@ -22,6 +22,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
+#if WITH_NUCLEX_SUPPORT_TRANSACTIONS
+
 using Nuclex.Support.Scheduling;
 using Nuclex.Support.Tracking;
 
@@ -270,3 +272,5 @@ namespace Nuclex.Windows.Forms {
   }
 
 } // namespace Nuclex.Windows.Forms
+
+#endif // WITH_NUCLEX_SUPPORT_TRANSACTIONS
