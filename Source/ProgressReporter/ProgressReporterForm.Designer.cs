@@ -17,21 +17,22 @@ limitations under the License.
 */
 #endregion // Apache License 2.0
 
+#if WITH_NUCLEX_SUPPORT_TRANSACTIONS
+
 namespace Nuclex.Windows.Forms {
+
   partial class ProgressReporterForm {
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
+
+    /// <summary>Required designer variable.</summary>
     private System.ComponentModel.IContainer components = null;
 
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
+    /// <summary>Clean up any resources being used.</summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing) {
       if(disposing && (components != null)) {
         components.Dispose();
       }
+
       base.Dispose(disposing);
     }
 
@@ -115,5 +116,9 @@ namespace Nuclex.Windows.Forms {
     private Nuclex.Windows.Forms.AsyncProgressBar progressBar;
     private System.Windows.Forms.Label statusLabel;
     private System.Windows.Forms.Timer controlCreationTimer;
+
   }
-}
+
+} // namespace Nuclex.Windows.Forms
+
+#endif // WITH_NUCLEX_SUPPORT_TRANSACTIONS

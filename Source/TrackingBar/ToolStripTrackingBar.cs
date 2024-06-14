@@ -22,6 +22,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+#if WITH_NUCLEX_SUPPORT_TRANSACTIONS
+
 using Nuclex.Support.Tracking;
 
 namespace Nuclex.Windows.Forms {
@@ -111,3 +113,5 @@ namespace Nuclex.Windows.Forms {
   }
 
 } // namespace Nuclex.Windows.Forms
+
+#endif // WITH_NUCLEX_SUPPORT_TRANSACTIONS
