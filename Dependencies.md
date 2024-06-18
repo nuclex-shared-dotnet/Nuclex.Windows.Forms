@@ -1,5 +1,5 @@
-Nuclex.Support Dependencies
-===================================
+Nuclex.Windows.Forms Dependencies
+================================
 
 
 To Compile the Library
@@ -10,17 +10,19 @@ the following directory layout:
 
     root/
         Nuclex.Windows.Forms/       <-- you are here
-            Nuclex.Windows.Forms (net-4.6).csproj
+            ...
 
         Nuclex.Support.Native/      <-- Git: nuclex-shared-dotnet/Nuclex.Support
-            Nuclex.Support (net-4.6).csproj
+            ...
 
         third-party/
             nunit
             nmock
 
-You should already have that directory layout in playe if you cloned the "frame fixer"
+You should already have that directory layout in place if you cloned the "foundation package"
 repository (with `--recurse-submodules`).
+
+The actual, direct requirements of the code to compile are:
 
   * Nuclex.Support
   * nunit (optional, if unit tests are built)
@@ -30,4 +32,5 @@ repository (with `--recurse-submodules`).
 To Use this Library as a Binary
 -------------------------------
 
+  * Nuclex.Windows.Forms.dll
   * Nuclex.Support.dll
