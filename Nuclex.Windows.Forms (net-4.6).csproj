@@ -73,34 +73,16 @@
     <Compile Include="Source\LateCheckedSynchronizer.cs" />
     <Compile Include="Source\Messages\IMessageService.cs" />
     <Compile Include="Source\Messages\MessageEventArgs.cs" />
-    <Compile Include="Source\Messages\MessageEventArgs.Test.cs">
-      <DependentUpon>MessageEventArgs.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\Messages\MessageServiceHelper.cs" />
     <Compile Include="Source\Messages\MessageText.cs" />
-    <Compile Include="Source\Messages\MessageText.Test.cs">
-      <DependentUpon>MessageText.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\Messages\StandardMessageBoxManager.cs" />
     <Compile Include="Source\NullActiveWindowTracker.cs" />
     <Compile Include="Source\ViewModels\DialogViewModel.cs" />
-    <Compile Include="Source\ViewModels\DialogViewModel.Test.cs">
-      <DependentUpon>DialogViewModel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\ViewModels\IMultiPageViewModel.cs" />
     <Compile Include="Source\ViewModels\MultiPageViewModel.cs" />
     <Compile Include="Source\ViewModels\ThreadedAction.cs" />
-    <Compile Include="Source\ViewModels\ThreadedAction.Test.cs">
-      <DependentUpon>ThreadedAction.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\ViewModels\ThreadedDialogViewModel.cs" />
-    <Compile Include="Source\ViewModels\ThreadedDialogViewModel.Test.cs">
-      <DependentUpon>ThreadedDialogViewModel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\ViewModels\ThreadedViewModel.cs" />
-    <Compile Include="Source\ViewModels\ThreadedViewModel.Test.cs">
-      <DependentUpon>ThreadedViewModel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\IActiveWindowTracker.cs" />
     <Compile Include="Source\Views\IView.cs" />
     <Compile Include="Source\IWindowManager.cs" />
@@ -114,9 +96,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Source\WindowManager.cs" />
-    <Compile Include="Source\WindowManager.Test.cs">
-      <DependentUpon>WindowManager.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Source\Controls\ProgressSpinner.resx">
       <DependentUpon>ProgressSpinner.cs</DependentUpon>
     </EmbeddedResource>
@@ -130,16 +109,10 @@
     <Compile Include="Source\AsyncProgressBar\AsyncProgressBar.Designer.cs">
       <DependentUpon>AsyncProgressBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Source\AsyncProgressBar\AsyncProgressBar.Test.cs">
-      <DependentUpon>AsyncProgressBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\ContainerListView\ContainerListView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Source\ContainerListView\ContainerListView.Designer.cs">
-      <DependentUpon>ContainerListView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Source\ContainerListView\ContainerListView.Test.cs">
       <DependentUpon>ContainerListView.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\ContainerListView\ListViewEmbeddedControl.cs" />
