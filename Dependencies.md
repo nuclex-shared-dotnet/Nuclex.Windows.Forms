@@ -12,7 +12,7 @@ the following directory layout:
         Nuclex.Windows.Forms/       <-- you are here
             ...
 
-        Nuclex.Support.Native/      <-- Git: nuclex-shared-dotnet/Nuclex.Support
+        Nuclex.Support/             <-- Git: nuclex-shared-dotnet/Nuclex.Support
             ...
 
         third-party/
@@ -24,13 +24,13 @@ repository (with `--recurse-submodules`).
 
 The actual, direct requirements of the code to compile are:
 
-  * Nuclex.Support
-  * nunit (optional, if unit tests are built)
-  * nmock (optional, if unit tests are built)
+  * Nuclex.Support         (project)
+  * nunit                  (NuGet package, optional, if unit tests are built)
+  * nmock                  (NuGet package, optional, if unit tests are built)
 
 
 To Use this Library as a Binary
 -------------------------------
 
-  * Nuclex.Windows.Forms.dll
-  * Nuclex.Support.dll
+  * Nuclex.Windows.Forms   (project)
+  * Nuclex.Support         (project)
