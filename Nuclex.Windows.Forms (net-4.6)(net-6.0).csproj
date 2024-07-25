@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net462;net6.0-windows</TargetFrameworks>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <AssemblyName>Nuclex.Windows.Forms</AssemblyName>
+    <RootNamespace>Nuclex.Windows.Forms</RootNamespace>
+    <IntermediateOutputPath>obj\source</IntermediateOutputPath>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".git" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nuclex.Support\Nuclex.Support (netstandard-2.0).csproj" />
+  </ItemGroup>
+
+</Project>

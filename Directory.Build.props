@@ -1,0 +1,21 @@
+<Project>
+
+  <!--
+    This file is required to work around one of the many issues with NuGet.
+    https://github.com/NuGet/Home/issues/4463
+
+    If you place two project files side by side, NuGet dumps its 'project.assets.json' file
+    into the root 'obj' directory (instead of the intermediate directory below it),
+    causing one project to overwrite the other project's dependencies.
+
+    There won't be any buld warning, just suddenly one of the projects won't be able to
+    access its dependencies and fail to build.
+
+    Why such a lackluster system was integrated at that level rather than just left to
+    (mis)manage the references by updating the project file as needed, I don't know.
+    files and 
+  -->
+  <PropertyGroup>
+    <MSBuildProjectExtensionsPath>obj\$(MSBuildProjectName)</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>
