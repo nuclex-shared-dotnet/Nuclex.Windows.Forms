@@ -18,7 +18,6 @@ limitations under the License.
 #endregion // Apache License 2.0
 
 using System;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -27,6 +26,9 @@ using System.Windows.Forms;
 namespace Nuclex.Windows.Forms.Controls {
 
   /// <summary>Displays a progress spinner to entertain the user while waiting</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public partial class ProgressSpinner : UserControl {
 
     /// <summary>Number of dots the progress spinner will display</summary>
