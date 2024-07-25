@@ -17,7 +17,6 @@ the following directory layout:
 
         third-party/
             nunit
-            nmock
 
 You should already have that directory layout in place if you cloned the "foundation package"
 repository (with `--recurse-submodules`).
@@ -26,7 +25,6 @@ The actual, direct requirements of the code to compile are:
 
   * Nuclex.Support         (project)
   * nunit                  (NuGet package, optional, if unit tests are built)
-  * nmock                  (NuGet package, optional, if unit tests are built)
 
 
 To Use this Library as a Binary
