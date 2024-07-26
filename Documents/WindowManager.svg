@@ -1,0 +1,109 @@
+<?xml version="1.0" standalone="no" ?>
+<svg width="720px" height="1240px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 235,160 L 235,122" fill="none" stroke="#000000" />
+    <path d="M 225,142 L 235,122 245,142 Z" fill="#e0e0e0" stroke="#000000" />
+    <path d="M 235,360 L 235,306" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <path d="M 225,326 L 235,306 245,326 Z" fill="#e0e0e0" stroke="#000000" />
+    <path d="M 460,500 L 510,500" fill="none" stroke="#000000" />
+    <path d="M 494,492 L 510,500 494,508" fill="none" stroke="#000000" />
+    <path d="M 300,640 L 300,610 610,610 610,570" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <path d="M 600,590 L 610,570 620,590 Z" fill="#e0e0e0" stroke="#000000" />
+    <path d="M 620,830 L 620,610 610,610 610,570" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <path d="M 600,590 L 610,570 620,590 Z" fill="#e0e0e0" stroke="#000000" />
+    <path d="M 610,450 L 610,400" fill="none" stroke="#000000" />
+    <path d="M 602,418 L 610,402 618,418" fill="none" stroke="#000000" />
+    <path d="M 460,370 L 510,370" fill="none" stroke="#000000" />
+    <path d="M 494,362 L 510,370 494,378" fill="none" stroke="#000000" />
+    <path d="M 610,290 L 610,230" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <path d="M 600,252 L 610,232 620,252 Z" fill="#e0e0e0" stroke="#000000" />
+    <path d="M 610,290 L 610,230" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <text x="645" y="267" font-size="11" font-weight="400" font-family="Arial" fill="#000000" text-anchor="middle">(Optional)</text>
+    <path d="M 602,248 L 610,232 618,248" fill="none" stroke="#000000" />
+    <path d="M 680,1100 L 680,610 610,610 610,570" fill="none" stroke="#000000" stroke-dasharray="5, 5" />
+    <path d="M 600,590 L 610,570 620,590 Z" fill="#e0e0e0" stroke="#000000" />
+    <rect x="10" y="10" width="450" height="112" fill="#c8ffc8" stroke="#000000" />
+    <line x1="10" y1="50" x2="460" y2="50" stroke="#000000" />
+    <line x1="10" y1="96" x2="460" y2="96" stroke="#000000" />
+    <text x="235" y="45" font-size="13" font-weight="700" font-family="Arial" font-style="italic" fill="#000000" text-anchor="middle">IActiveWindowTracker</text>
+    <text x="235" y="27" font-size="13" font-weight="400" font-family="Arial" fill="#000000" text-anchor="middle">&lt;&lt;interface&gt;&gt;</text>
+    <text x="235" y="62" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="235" y="108" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="20" y="81" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ ActiveWindow : Form</text>
+    <rect x="10" y="160" width="450" height="146" fill="#c8ffc8" stroke="#000000" />
+    <line x1="10" y1="200" x2="460" y2="200" stroke="#000000" />
+    <text x="235" y="195" font-size="13" font-weight="700" font-family="Arial" font-style="italic" fill="#000000" text-anchor="middle">IWindowManager</text>
+    <text x="235" y="177" font-size="13" font-weight="400" font-family="Arial" fill="#000000" text-anchor="middle">&lt;&lt;interface&gt;&gt;</text>
+    <text x="235" y="212" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="20" y="231" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ OpenRoot&lt;TViewModel&gt;(viewModel : TViewModel = null) : Form</text>
+    <text x="20" y="251" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ ShowModal&lt;TViewModel&gt;(viewModel : TViewModel = null) : bool?</text>
+    <text x="20" y="271" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ CreateView&lt;TViewModel&gt;(viewModel : TViewModel = null) : Control</text>
+    <text x="20" y="291" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ CreateViewModel&lt;TViewModel&gt;() : TViewModel</text>
+    <rect x="10" y="360" width="450" height="212" fill="#c8ffc8" stroke="#000000" />
+    <line x1="10" y1="380" x2="460" y2="380" stroke="#000000" />
+    <line x1="10" y1="426" x2="460" y2="426" stroke="#000000" />
+    <text x="235" y="375" font-size="13" font-weight="700" font-family="Arial" fill="#000000" text-anchor="middle">WindowManager</text>
+    <text x="235" y="392" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="235" y="438" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="20" y="411" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ ActiveWindow : Form</text>
+    <text x="20" y="457" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ OpenRoot&lt;TViewModel&gt;(viewModel : TViewModel = null) : Form</text>
+    <text x="20" y="477" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ ShowModal&lt;TViewModel&gt;(viewModel : TViewModel = null) : bool?</text>
+    <text x="20" y="497" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ CreateView&lt;TViewModel&gt;(viewModel : TViewModel = null) : Control</text>
+    <text x="20" y="517" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ CreateViewModel&lt;TViewModel&gt;() : TViewModal</text>
+    <text x="20" y="537" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># LocateViewForViewModel(viewModelType : Type) : Type</text>
+    <text x="20" y="557" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># CreateInstance(type : Type) : object</text>
+    <rect x="510" y="450" width="200" height="120" fill="#c8ffc8" stroke="#000000" />
+    <line x1="510" y1="490" x2="710" y2="490" stroke="#000000" />
+    <line x1="510" y1="536" x2="710" y2="536" stroke="#000000" />
+    <text x="610" y="485" font-size="13" font-weight="700" font-family="Arial" font-style="italic" fill="#000000" text-anchor="middle">IView</text>
+    <text x="610" y="467" font-size="13" font-weight="400" font-family="Arial" fill="#000000" text-anchor="middle">&lt;&lt;interface&gt;&gt;</text>
+    <text x="610" y="502" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="610" y="548" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="520" y="521" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ DataContext : object</text>
+    <rect x="10" y="640" width="580" height="132" fill="#c8ffc8" stroke="#000000" />
+    <line x1="10" y1="660" x2="590" y2="660" stroke="#000000" />
+    <line x1="10" y1="706" x2="590" y2="706" stroke="#000000" />
+    <text x="300" y="655" font-size="13" font-weight="700" font-family="Arial" fill="#000000" text-anchor="middle">ViewForm</text>
+    <text x="300" y="672" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="300" y="718" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="20" y="691" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ DataContext : object</text>
+    <text x="20" y="737" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># OnDataContextChanged(sender : object, oldDataContext : object, newDataContext : object)</text>
+    <text x="20" y="757" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># InvalidateAllViewModelProperties()</text>
+    <rect x="70" y="830" width="580" height="212" fill="#c8ffc8" stroke="#000000" />
+    <line x1="70" y1="850" x2="650" y2="850" stroke="#000000" />
+    <line x1="70" y1="896" x2="650" y2="896" stroke="#000000" />
+    <text x="360" y="845" font-size="13" font-weight="700" font-family="Arial" fill="#000000" text-anchor="middle">MultiPageViewForm</text>
+    <text x="360" y="862" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="360" y="908" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="80" y="881" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ DataContext : object</text>
+    <text x="80" y="927" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># OnDataContextChanged(sender : object, oldDataContext : object, newDataContext : object)</text>
+    <text x="80" y="947" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># InvalidateAllViewModelProperties()</text>
+    <text x="80" y="967" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># IdentifyPageContainer() : Control</text>
+    <text x="80" y="987" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># OnViewModelPropertyChanged(sender : object, arguments : PropertyChangedEventArgs)</text>
+    <text x="80" y="1007" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># ActivePageView : Control</text>
+    <text x="80" y="1027" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># ActivePageViewModel : object</text>
+    <rect x="510" y="290" width="200" height="112" fill="#c8ffc8" stroke="#000000" />
+    <line x1="510" y1="310" x2="710" y2="310" stroke="#000000" />
+    <line x1="510" y1="356" x2="710" y2="356" stroke="#000000" />
+    <text x="610" y="305" font-size="13" font-weight="700" font-family="Arial" fill="#000000" text-anchor="middle">YourViewModel</text>
+    <text x="610" y="322" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="610" y="368" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="520" y="341" font-size="13" font-weight="400" font-family="Arial" fill="#640000">- ...</text>
+    <text x="520" y="387" font-size="13" font-weight="400" font-family="Arial" fill="#000064">+ ...</text>
+    <rect x="510" y="120" width="200" height="112" fill="#c8ffc8" stroke="#000000" />
+    <line x1="510" y1="160" x2="710" y2="160" stroke="#000000" />
+    <line x1="510" y1="206" x2="710" y2="206" stroke="#000000" />
+    <text x="610" y="155" font-size="13" font-weight="700" font-family="Arial" font-style="italic" fill="#000000" text-anchor="middle">INotifyPropertyChanged</text>
+    <text x="610" y="137" font-size="13" font-weight="400" font-family="Arial" fill="#000000" text-anchor="middle">&lt;&lt;interface&gt;&gt;</text>
+    <text x="610" y="172" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="610" y="218" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="520" y="191" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ &lt;&lt;event&gt;&gt; PropertyChanged</text>
+    <rect x="130" y="1100" width="580" height="132" fill="#c8ffc8" stroke="#000000" />
+    <line x1="130" y1="1120" x2="710" y2="1120" stroke="#000000" />
+    <line x1="130" y1="1166" x2="710" y2="1166" stroke="#000000" />
+    <text x="420" y="1115" font-size="13" font-weight="700" font-family="Arial" fill="#000000" text-anchor="middle">ViewControl</text>
+    <text x="420" y="1132" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Attributes</text>
+    <text x="420" y="1178" font-size="11" font-weight="700" font-family="Arial" fill="#808080" text-anchor="middle">Methods</text>
+    <text x="140" y="1151" font-size="13" font-weight="400" font-family="Arial" fill="#640000">+ DataContext : object</text>
+    <text x="140" y="1197" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># OnDataContextChanged(sender : object, oldDataContext : object, newDataContext : object)</text>
+    <text x="140" y="1217" font-size="13" font-weight="400" font-family="Arial" fill="#000064"># InvalidateAllViewModelProperties()</text>
+</svg>
