@@ -74,7 +74,19 @@ namespace Nuclex.Windows.Forms {
 
       base.View = View.Details;
 
-      this.columnHeaderHeight = Font.Height;
+#if NET6_0_OR_GREATER
+      if(OperatingSystem.IsWindows()) {
+#else
+      if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
+#endif
+        this.columnHeaderHeight = Font.Height;
+      } else {
+        // Font sizes *should* be in one 72ths of an inch. And screens *might*
+        // be set to 96 DPI. So this is the best we can do, cross-platform,
+        // due to Microsoft's shortsighted design. Sorry high DPI users.
+        //this.columnHeaderHeight = (int)(Font.Size * 96 / 72);
+        this.columnHeaderHeight = 16;
+      }
     }
 
     /// <summary>Controls being embedded in the ListView</summary>
@@ -98,7 +110,7 @@ namespace Nuclex.Windows.Forms {
 
           bool intersectsColumnHeader =
             (base.HeaderStyle != ColumnHeaderStyle.None) &&
-            (cellBounds.Top < base.Font.Height);
+            (cellBounds.Top < this.columnHeaderHeight);
 
           embeddedControl.Control.Visible = !intersectsColumnHeader;
           embeddedControl.Control.Bounds = cellBounds;

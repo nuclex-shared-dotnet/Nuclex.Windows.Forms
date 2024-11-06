@@ -22,6 +22,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 
 namespace Nuclex.Windows.Forms.Controls {
 
