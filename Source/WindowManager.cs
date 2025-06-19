@@ -29,6 +29,7 @@ using System.Runtime.Versioning;
 using Nuclex.Support;
 using Nuclex.Windows.Forms.AutoBinding;
 using Nuclex.Windows.Forms.Views;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Nuclex.Windows.Forms {
 
@@ -125,11 +126,10 @@ namespace Nuclex.Windows.Forms {
       window.Closed += this.rootWindowClosedDelegate;
 
       // If we either created the view model or the user explicitly asked us to
-      // dispose his view model, tag the window so that we know to dispose it
-      // when we're done (but still allow the user to change his mind)
+      // dispose his view model, prepare the window so that it will dispose its
+      // view model when the window is done.
       if((viewModel == null) || disposeOnClose) {
-        window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
-        //window.SetValue(DisposeViewModelOnCloseProperty, true);
+        setupViewModelDisposal(window);
       }
 
       window.Show();
@@ -158,11 +158,10 @@ namespace Nuclex.Windows.Forms {
 
       try {
         // If we either created the view model or the user explicitly asked us to
-        // dispose his view model, tag the window so that we know to dispose it
-        // when we're done (but still allow the user to change his mind)
+        // dispose his view model, prepare the window so that it will dispose its
+        // view model when the window is done.
         if((viewModel == null) || disposeOnClose) {
-          window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
-          //window.SetValue(DisposeViewModelOnCloseProperty, true);
+          setupViewModelDisposal(window);
         }
 
         DialogResult result = window.ShowDialog(this.activeWindow);
@@ -178,14 +177,6 @@ namespace Nuclex.Windows.Forms {
         window.Activated -= this.rootWindowActivatedDelegate;
         ActiveWindow = window.Owner;
 
-        if(shouldDisposeViewModelOnClose(window)) {
-          IView windowAsView = window as IView;
-          if(windowAsView != null) {
-            object viewModelAsObject = windowAsView.DataContext;
-            windowAsView.DataContext = null;
-            disposeIfDisposable(viewModelAsObject);
-          }
-        }
         disposeIfDisposable(window);
       }
     }
@@ -331,6 +322,10 @@ namespace Nuclex.Windows.Forms {
       return Activator.CreateInstance(type);
     }
 
+    protected virtual object CreateServiceScope() {
+      return null;
+    }
+
     /// <summary>Called when one of the application's root windows is closed</summary>
     /// <param name="sender">Window that has been closed</param>
     /// <param name="arguments">Not used</param>
@@ -339,20 +334,11 @@ namespace Nuclex.Windows.Forms {
       closedWindow.Closed -= this.rootWindowClosedDelegate;
       closedWindow.Activated -= this.rootWindowActivatedDelegate;
 
-      // If the view model was created just for this view or if the user asked us
-      // to dispose of his view model, do so now.
-      if(shouldDisposeViewModelOnClose(closedWindow)) {
-        IView windowAsView = closedWindow as IView;
-        if(windowAsView != null) {
-          object viewModelAsObject = windowAsView.DataContext;
-          windowAsView.DataContext = null;
-          disposeIfDisposable(viewModelAsObject);
-        }
-      }
-
       lock(this) {
         ActiveWindow = null;
       }
+
+      //disposeIfDisposable(closedWindow);
     }
 
     /// <summary>Called when one of the application's root windows is activated</summary>
@@ -402,16 +388,24 @@ namespace Nuclex.Windows.Forms {
       }
     }
 
-    /// <summary>Determines if the view owns the view model</summary>
-    /// <param name="view">View that will be checked for ownership</param>
-    /// <returns>True if the view owns the view model</returns>
-    private static bool shouldDisposeViewModelOnClose(Control view) {
-      string tagAsString = view.Tag as string;
-      if(tagAsString != null) {
-        return tagAsString.Contains("DisposeViewModelOnClose");
-      } else {
-        return false;
+    /// <summary>Attaches a view model disposer to a control</summary>
+    /// <param name="control">
+    ///   Control whose view model will be disposed when it is itself disposed
+    /// </param>
+    private void setupViewModelDisposal(Control control) {
+      IView controlAsView = control as IView;
+      if(controlAsView != null) {
+        IDisposable disposableViewModel = controlAsView.DataContext as IDisposable;
+        if(disposableViewModel != null) {
+          control.Disposed += delegate(object sender, EventArgs arguments) {
+            disposableViewModel.Dispose();
+            controlAsView.DataContext = null;
+          };
+        }
       }
+
+      //window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
+      //window.SetValue(DisposeViewModelOnCloseProperty, true);
     }
 
     /// <summary>Filters a list of types to contain only those in a specific namespace</summary>

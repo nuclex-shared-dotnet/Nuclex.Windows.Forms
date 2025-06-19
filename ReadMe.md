@@ -57,9 +57,8 @@ static void Main() {
   Application.EnableVisualStyles();
   Application.SetCompatibleTextRenderingDefault(false);
 
-  using(var windowManager = new WindowManager()) {
-    Application.Run(windowManager.OpenRoot<MainViewModel>());
-  }
+  var windowManager = new WindowManager();
+  Application.Run(windowManager.OpenRoot<MainViewModel>());
 }
 ```
 
