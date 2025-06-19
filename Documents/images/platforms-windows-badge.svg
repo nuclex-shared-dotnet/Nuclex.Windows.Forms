@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="140" height="20" role="img" aria-label="platforms: linux windows">
+  <title>platforms: linux and windows</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1" />
+    <stop offset="1" stop-opacity=".1" />
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="140" height="20" rx="3" fill="#fff" />
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="63" height="20" fill="#555" />
+    <rect x="63" width="77" height="20" fill="#00a4ef" />
+    <rect width="140" height="20" fill="url(#s)" />
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true" x="325" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="530">platforms</text>
+    <text x="325" y="140" transform="scale(.1)" fill="#fff" textLength="530">platforms</text>
+    <text aria-hidden="true" x="1100" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="470">windows</text>
+    <text x="1100" y="140" transform="scale(.1)" fill="#fff" textLength="470">windows</text>
+  </g>
+  <g id="windows-logo" style="fill:#fff" transform="matrix(0.05,0,0,0.05,67,2)">
+    <path id="upper-left" d="m 2.609,144.999 h 119.892 c 1.381,0 2.5,-1.119 2.5,-2.5 V 28.681 c 0,-0.722 -0.312,-1.408 -0.855,-1.883 -0.543,-0.475 -1.261,-0.693 -1.981,-0.594 L 2.164,42.5 C 0.923,42.669 -0.001,43.728 0,44.98 l 0.109,97.521 c 0.002,1.38 1.121,2.498 2.5,2.498 z" />
+    <path id="upper-right" d="m 139.999,25.775 v 116.724 c 0,1.381 1.119,2.5 2.5,2.5 H 302.46 c 1.381,0 2.5,-1.119 2.5,-2.5 V 2.5 c 0,-0.726 -0.315,-1.416 -0.864,-1.891 -0.548,-0.475 -1.275,-0.687 -1.996,-0.583 L 142.139,23.301 c -1.229,0.179 -2.14,1.233 -2.14,2.474 z" />
+    <path id="lower-left" d="m 122.501,279.948 c 0.601,0 1.186,-0.216 1.644,-0.616 0.544,-0.475 0.856,-1.162 0.856,-1.884 V 162.5 c 0,-1.381 -1.119,-2.5 -2.5,-2.5 H 2.592 c -0.663,0 -1.299,0.263 -1.768,0.732 -0.469,0.469 -0.732,1.105 -0.732,1.768 l 0.006,98.515 c 0,1.25 0.923,2.307 2.16,2.477 l 119.903,16.434 c 0.113,0.014 0.227,0.022 0.34,0.022 z" />
+    <path id="lower-right" d="m 302.46,305 c 0.599,0 1.182,-0.215 1.64,-0.613 0.546,-0.475 0.86,-1.163 0.86,-1.887 l 0.04,-140 c 0,-0.663 -0.263,-1.299 -0.732,-1.768 C 303.799,160.263 303.163,160 302.5,160 H 142.499 c -1.381,0 -2.5,1.119 -2.5,2.5 v 117.496 c 0,1.246 0.918,2.302 2.151,2.476 l 159.961,22.504 c 0.117,0.016 0.233,0.024 0.349,0.024 z" />
+  </g>
+</svg>
