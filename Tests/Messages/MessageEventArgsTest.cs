@@ -20,12 +20,19 @@ limitations under the License.
 using System;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using NUnit.Framework;
 
 namespace Nuclex.Windows.Forms.Messages {
 
   /// <summary>Unit tests for the message box event argument container</summary>
   [TestFixture]
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   internal class MessageEventArgsTest {
 
     /// <summary>Verifies that the image associated with the message gets stored</summary>

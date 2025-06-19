@@ -56,7 +56,7 @@ namespace Nuclex.Windows.Forms.Views {
 
     /// <summary>Refreshes all properties from the view model</summary>
     protected void InvalidateAllViewModelProperties() {
-      OnViewModelPropertyChanged(this.dataContext, PropertyChangedEventArgsHelper.Wildcard);
+      OnViewModelPropertyChanged(DataContext, PropertyChangedEventArgsHelper.Wildcard);
     }
 
     /// <summary>Called when a property of the view model is changed</summary>
@@ -66,6 +66,7 @@ namespace Nuclex.Windows.Forms.Views {
       object sender, PropertyChangedEventArgs arguments
     ) { }
 
+#if !NET8_0_OR_GREATER
     /// <summary>Provides the data binding target for the view</summary>
     public object DataContext {
       get { return this.dataContext; }
@@ -77,9 +78,12 @@ namespace Nuclex.Windows.Forms.Views {
         }
       }
     }
+#endif
 
+#if !NET8_0_OR_GREATER
     /// <summary>Active data binding target, can be null</summary>
     private object dataContext;
+#endif
     /// <summary>Delegate for the OnViewModelPropertyChanged() method</summary>
     private PropertyChangedEventHandler onViewModelPropertyChangedDelegate;
 

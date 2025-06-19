@@ -20,9 +20,16 @@ limitations under the License.
 using System;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 namespace Nuclex.Windows.Forms.Messages {
 
   /// <summary>Uses task dialogs to display message boxes</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class StandardMessageBoxManager : IMessageService {
 
     #region class MessageScope

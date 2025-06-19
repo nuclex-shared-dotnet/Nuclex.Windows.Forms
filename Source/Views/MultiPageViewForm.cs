@@ -25,12 +25,19 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using Nuclex.Support;
 using Nuclex.Windows.Forms.ViewModels;
 
 namespace Nuclex.Windows.Forms.Views {
 
   /// <summary>Special view form that can display different child views</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class MultiPageViewForm : ViewForm {
 
     #region struct RedrawLockScope

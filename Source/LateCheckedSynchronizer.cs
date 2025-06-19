@@ -21,6 +21,10 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 namespace Nuclex.Windows.Forms {
 
   /// <summary>
@@ -41,6 +45,9 @@ namespace Nuclex.Windows.Forms {
   ///     the main window only when something needs to be executed in the UI thread.
   ///   </para>
   /// </remarks>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   class LateCheckedSynchronizer : ISynchronizeInvoke {
 
     /// <summary>Initializes a new late-checked main window synchronizer</summary>

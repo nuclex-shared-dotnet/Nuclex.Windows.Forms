@@ -22,6 +22,10 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using Nuclex.Support;
 using Nuclex.Support.Threading;
 
@@ -91,6 +95,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
 
     /// <summary>Initializes a threaded action that uses its own thread runner</summary>
     public ThreadedAction(ISynchronizeInvoke uiContext = null) : this() {
+#if NET6_0_OR_GREATER
+      if(OperatingSystem.IsWindows()) {
+#endif
       if(uiContext == null) {
         this.uiContext = LateCheckedSynchronizer.GetMainWindow();
         if(this.uiContext == null) {
@@ -99,6 +106,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
       } else {
         this.uiContext = uiContext;
       }
+#if NET6_0_OR_GREATER
+      }
+#endif
 
       this.ownThreadRunner = new ThreadedActionThreadRunner(this);
     }
@@ -113,6 +123,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
     public ThreadedAction(
       ThreadedViewModel viewModel, ISynchronizeInvoke uiContext = null
     ) : this() {
+#if NET6_0_OR_GREATER
+      if(OperatingSystem.IsWindows()) {
+#endif
       if(uiContext == null) {
         this.uiContext = LateCheckedSynchronizer.GetMainWindow();
         if(this.uiContext == null) {
@@ -121,6 +134,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
       } else {
         this.uiContext = uiContext;
       }
+#if NET6_0_OR_GREATER
+      }
+#endif
 
       this.externalThreadRunner = viewModel.ThreadRunner;
     }

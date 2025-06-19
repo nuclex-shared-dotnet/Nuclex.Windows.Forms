@@ -21,6 +21,10 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using Nuclex.Support;
 
 namespace Nuclex.Windows.Forms.Views {
@@ -28,6 +32,9 @@ namespace Nuclex.Windows.Forms.Views {
   /// <summary>
   ///   Base class for MVVM windows that act as views connected to a view model
   /// </summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class ViewForm : Form, IView {
 
     /// <summary>Initializes a new view control</summary>
@@ -35,6 +42,7 @@ namespace Nuclex.Windows.Forms.Views {
       this.onViewModelPropertyChangedDelegate = OnViewModelPropertyChanged;
     }
 
+#if !NET8_0_OR_GREATER
     /// <summary>Provides the data binding target for the view</summary>
     public object DataContext {
       get { return this.dataContext; }
@@ -46,6 +54,7 @@ namespace Nuclex.Windows.Forms.Views {
         }
       }
     }
+#endif
 
     /// <summary>Called when the window's data context is changed</summary>
     /// <param name="sender">Window whose data context was changed</param>
@@ -68,7 +77,7 @@ namespace Nuclex.Windows.Forms.Views {
 
     /// <summary>Refreshes all properties from the view model</summary>
     protected void InvalidateAllViewModelProperties() {
-      OnViewModelPropertyChanged(this.dataContext, PropertyChangedEventArgsHelper.Wildcard);
+      OnViewModelPropertyChanged(DataContext, PropertyChangedEventArgsHelper.Wildcard);
     }
 
     /// <summary>Called when a property of the view model is changed</summary>
@@ -78,8 +87,10 @@ namespace Nuclex.Windows.Forms.Views {
       object sender, PropertyChangedEventArgs arguments
     ) { }
 
+#if !NET8_0_OR_GREATER
     /// <summary>Active data binding target, can be null</summary>
     private object dataContext;
+#endif
     /// <summary>Delegate for the OnViewModelPropertyChanged() method</summary>
     private PropertyChangedEventHandler onViewModelPropertyChangedDelegate;
 

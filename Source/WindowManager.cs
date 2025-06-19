@@ -22,6 +22,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using Nuclex.Support;
 using Nuclex.Windows.Forms.AutoBinding;
 using Nuclex.Windows.Forms.Views;
@@ -29,6 +33,9 @@ using Nuclex.Windows.Forms.Views;
 namespace Nuclex.Windows.Forms {
 
   /// <summary>Manages an application's windows and views</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class WindowManager : Observable, IWindowManager {
 
     #region class CancellableDisposer

@@ -26,6 +26,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using Nuclex.Support.Collections;
 
 namespace Nuclex.Windows.Forms {
@@ -44,12 +48,15 @@ namespace Nuclex.Windows.Forms {
   ///   </para>
   ///   <para>
   ///     This control is useful for simple item lists where you want to provide
-  ///     a combobox, checkbox or other control to the user for a certain column.
+  ///     a combo box, checkbox or other control to the user for a certain column.
   ///     It will not perform well for lists with hundreds of items since it
   ///     requires a control to be created per row and management of the embedded
   ///     controls is designed for limited usage.
   ///   </para>
   /// </remarks>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public partial class ContainerListView : System.Windows.Forms.ListView {
 
     /// <summary>Message sent to a control to let it paint itself</summary>

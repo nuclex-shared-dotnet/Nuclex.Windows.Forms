@@ -19,12 +19,19 @@ limitations under the License.
 
 using System;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 using NUnit.Framework;
 
 namespace Nuclex.Windows.Forms {
 
   /// <summary>Unit test for the window manager</summary>
   [TestFixture]
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class WindowManagerTest {
 
     /// <summary>Verifies that the window manager provides a default constructor</summary>

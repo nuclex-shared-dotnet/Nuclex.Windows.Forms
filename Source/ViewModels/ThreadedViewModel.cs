@@ -62,6 +62,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
     ///   UI dispatcher that can be used to run callbacks in the UI thread
     /// </param>
     protected ThreadedViewModel(ISynchronizeInvoke uiContext = null) {
+#if NET6_0_OR_GREATER
+      if(OperatingSystem.IsWindows()) {
+#endif
       if(uiContext == null) {
         this.uiContext = LateCheckedSynchronizer.GetMainWindow();
         if(this.uiContext == null) {
@@ -70,6 +73,9 @@ namespace Nuclex.Windows.Forms.ViewModels {
       } else {
         this.uiContext = uiContext;
       }
+#if NET6_0_OR_GREATER
+      }
+#endif
 
       this.reportErrorDelegate = new Action<Exception>(ReportError);
 

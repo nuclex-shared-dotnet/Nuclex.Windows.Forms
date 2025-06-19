@@ -20,9 +20,16 @@ limitations under the License.
 using System;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 namespace Nuclex.Windows.Forms.Messages {
 
   /// <summary>Contains helper methods for the message service</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public static class MessageServiceHelper {
 
     /// <summary>Asks the user a question that can be answered with yes or no</summary>

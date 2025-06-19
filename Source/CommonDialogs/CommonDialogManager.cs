@@ -21,9 +21,16 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
+
 namespace Nuclex.Windows.Forms.CommonDialogs {
 
   /// <summary>Displays common dialogs for selecting files and directories</summary>
+#if NET6_0_OR_GREATER
+  [SupportedOSPlatform("windows")]
+#endif
   public class CommonDialogManager : ICommonDialogService {
 
     /// <summary>Initializes a new task dialog message service</summary>
