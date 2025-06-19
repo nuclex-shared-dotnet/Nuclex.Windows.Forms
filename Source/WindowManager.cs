@@ -39,6 +39,36 @@ namespace Nuclex.Windows.Forms {
 #endif
   public class WindowManager : Observable, IWindowManager {
 
+    #region class WindowManagerScope
+
+    /// <summary>Global scope that uses the WindowManager's CreateInstance()</summary>
+    public class WindowManagerScope : IWindowScope {
+
+      /// <summary>Initializes a new global window scope</summary>
+      /// <param name="windowManager">
+      ///   Window manager whose CreateInstance() method will be used
+      /// </param>
+      public WindowManagerScope(WindowManager windowManager) {
+        this.windowManager = windowManager;
+      }
+
+      /// <summary>Creates an instance of the specified type in the scope</summary>
+      /// <param name="type">Type an instance will be created of</param>
+      /// <returns>The created instance</returns>
+      object IWindowScope.CreateInstance(Type type) {
+        return this.windowManager.CreateInstance(type);
+      }
+
+      /// <summary>Does nothing because this is the global fallback scope</summary>
+      void IDisposable.Dispose() {}
+
+      /// <summary>WindowManager whose CreateInstance() method will be wrapped</summary>
+      private WindowManager windowManager;
+
+    }
+
+    #endregion // class WindwoManagerScope
+
     #region class CancellableDisposer
 
     /// <summary>Disposes an object that potentially implements IDisposable</summary>
@@ -91,6 +121,7 @@ namespace Nuclex.Windows.Forms {
 
       this.rootWindowActivatedDelegate = rootWindowActivated;
       this.rootWindowClosedDelegate = rootWindowClosed;
+      this.windowManagerAsScope = new WindowManagerScope(this);
       this.viewTypesForViewModels = new ConcurrentDictionary<Type, Type>();
     }
 
@@ -193,45 +224,55 @@ namespace Nuclex.Windows.Forms {
     public virtual Control CreateView<TViewModel>(
       TViewModel viewModel = null
     ) where TViewModel : class {
-      Type viewType = LocateViewForViewModel(typeof(TViewModel));
-      Control viewControl = (Control)CreateInstance(viewType);
-      using(var viewDisposer = new CancellableDisposer(viewControl)) {
+      Control viewControl;
+      {
+        Type viewType = LocateViewForViewModel(typeof(TViewModel));
 
-        // Create a view model if none was provided, and in either case assign
-        // the view model to the view (provided it implements IView).
-        using(var viewModelDisposer = new CancellableDisposer()) {
-          IView viewControlAsView = viewControl as IView;
-          if(viewModel == null) { // No view model provided, create one
-            if(viewControlAsView == null) { // View doesn't implement IView
-              viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
-              viewModelDisposer.Set(viewModel);
-            } else if(viewControlAsView.DataContext == null) { // View has no view model
-              viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
-              viewModelDisposer.Set(viewModel);
-              viewControlAsView.DataContext = viewModel;
-            } else { // There's an existing view model
-              viewModel = viewControlAsView.DataContext as TViewModel;
-              if(viewModel == null) { // The existing view model is another type
-                viewModel = (TViewModel)CreateInstance(typeof(TViewModel));
-                viewModelDisposer.Set(viewModel);
+        IWindowScope scope = CreateWindowScope();
+        using(var scopeDisposer = new CancellableDisposer(scope)) {
+          viewControl = (Control)scope.CreateInstance(viewType);
+          using(var viewDisposer = new CancellableDisposer(viewControl)) {
+
+            // Create a view model if none was provided, and in either case assign
+            // the view model to the view (provided it implements IView).
+            using(var viewModelDisposer = new CancellableDisposer()) {
+              IView viewControlAsView = viewControl as IView;
+              if(viewModel == null) { // No view model provided, create one
+                if(viewControlAsView == null) { // View doesn't implement IView
+                  viewModel = (TViewModel)scope.CreateInstance(typeof(TViewModel));
+                  viewModelDisposer.Set(viewModel);
+                } else if(viewControlAsView.DataContext == null) { // View has no view model
+                  viewModel = (TViewModel)scope.CreateInstance(typeof(TViewModel));
+                  viewModelDisposer.Set(viewModel);
+                  viewControlAsView.DataContext = viewModel;
+                } else { // There's an existing view model
+                  viewModel = viewControlAsView.DataContext as TViewModel;
+                  if(viewModel == null) { // The existing view model is another type
+                    viewModel = (TViewModel)scope.CreateInstance(typeof(TViewModel));
+                    viewModelDisposer.Set(viewModel);
+                    viewControlAsView.DataContext = viewModel;
+                  }
+                }
+              } else if(viewControlAsView != null) { // Caller has provided a view model
                 viewControlAsView.DataContext = viewModel;
               }
+
+              // If an auto binder was provided, automatically bind the view to the view model
+              if(this.autoBinder != null) {
+                this.autoBinder.Bind(viewControl, viewModel);
+              }
+
+              viewModelDisposer.Dismiss(); // Everything went well, we keep the view model
             }
-          } else if(viewControlAsView != null) { // Caller has provided a view model
-            viewControlAsView.DataContext = viewModel;
+
+            viewDisposer.Dismiss(); // Everything went well, we keep the view
           }
 
-          // If an auto binder was provided, automatically bind the view to the view model
-          if(this.autoBinder != null) {
-            this.autoBinder.Bind(viewControl, viewModel);
-          }
-
-          viewModelDisposer.Dismiss(); // Everything went well, we keep the view model
+          scopeDisposer.Dismiss(); // Everything went well, we keep the scope
         }
 
-        viewDisposer.Dismiss(); // Everything went well, we keep the view
-
-      }
+        setupScopeDisposal(viewControl, scope);
+      } // beauty scope
 
       return viewControl;
     }
@@ -322,8 +363,18 @@ namespace Nuclex.Windows.Forms {
       return Activator.CreateInstance(type);
     }
 
-    protected virtual object CreateServiceScope() {
-      return null;
+    /// <summary>Creates an instance of the specified type in a new scope</summary>
+    /// <param name="type">Type an instance will be created of</param>
+    /// <returns>The created instance and the scope in which it lives</returns>
+    /// <remarks>
+    ///   This is identical to <see cref="CreateInstance" /> but, if used together
+    ///   with a dependency injector, should also create a service scope. This way,
+    ///   an implicit service scope will cover the lifetime of a view model and
+    ///   any non-singleton services will use new instances, avoiding, for example,
+    ///   that multiple dialogs access the same database connection simultaneously.
+    /// </remarks>
+    protected virtual IWindowScope CreateWindowScope() {
+      return this.windowManagerAsScope;
     }
 
     /// <summary>Called when one of the application's root windows is closed</summary>
@@ -338,6 +389,7 @@ namespace Nuclex.Windows.Forms {
         ActiveWindow = null;
       }
 
+      // Application.Run() already does this and it's the user's responsibility anyways
       //disposeIfDisposable(closedWindow);
     }
 
@@ -392,7 +444,7 @@ namespace Nuclex.Windows.Forms {
     /// <param name="control">
     ///   Control whose view model will be disposed when it is itself disposed
     /// </param>
-    private void setupViewModelDisposal(Control control) {
+    private static void setupViewModelDisposal(Control control) {
       IView controlAsView = control as IView;
       if(controlAsView != null) {
         IDisposable disposableViewModel = controlAsView.DataContext as IDisposable;
@@ -406,6 +458,21 @@ namespace Nuclex.Windows.Forms {
 
       //window.Tag = "DisposeViewModelOnClose"; // TODO: Wrap SetProp() instead?
       //window.SetValue(DisposeViewModelOnCloseProperty, true);
+    }
+
+    /// <summary>Attaches a scope disposer to a control</summary>
+    /// <param name="control">
+    ///   Control that will dispose a scope when it is itself disposed
+    /// </param>
+    private void setupScopeDisposal(Control control, IWindowScope scope) {
+      if(!ReferenceEquals(scope, this.windowManagerAsScope)) {
+        IDisposable disposableScope = scope as IDisposable;
+        if(disposableScope != null) {
+          control.Disposed += delegate(object sender, EventArgs arguments) {
+            disposableScope.Dispose();
+          };
+        }
+      }
     }
 
     /// <summary>Filters a list of types to contain only those in a specific namespace</summary>
@@ -432,6 +499,8 @@ namespace Nuclex.Windows.Forms {
     private EventHandler rootWindowActivatedDelegate;
     /// <summary>Invoked when a root window has been closed</summary>
     private EventHandler rootWindowClosedDelegate;
+    /// <summary>Scope that uses the WindowManager's global CreateInstance() method</summary>
+    private WindowManagerScope windowManagerAsScope;
     /// <summary>View model binder that will be used on all created views</summary>
     private IAutoBinder autoBinder;
     /// <summary>Caches the view types to use for a view model</summary>

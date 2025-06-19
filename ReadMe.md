@@ -118,7 +118,7 @@ you have set up in your Ninject kernel.
 class MainViewModel {
 
   public MainViewModel(IMyService myService, IMySettings mySettings) {
-  	// ...
+    // ...
   }
 
 }
